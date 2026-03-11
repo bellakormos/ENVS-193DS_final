@@ -1,0 +1,129 @@
+---
+title: "Final"
+date: "2026-03-17"
+author: "Bella Kormos"
+format:
+  html:
+    toc: true # use this to display a table of contents
+execute:
+  message: false # use this to make sure messages don't show up
+  warning: false # use this to make sure warnings don't show upl
+---
+
+Link to my github: [GitHub Repository](https://github.com/bellakormos/ENVS-193DS_homework-03)
+
+# Homework Set Up
+
+Reading in packages:
+
+```{r}
+#| label: packages
+#| message: false
+library(tidyverse) # load in all packages
+library(janitor) # clean column names
+library(here) # identifies computer's root folder
+
+```
+
+Reading in data:
+
+```{r}
+#| label: reading in data
+#| message: false
+kelp <- read_csv(here("data", "kelp.csv")) # store the data and save object as "kelp" 
+```
+
+# Problem 1. Research writing
+
+## a. Transparent statistical methods
+
+## b. Figure needed
+
+## c. Suggestions for rewriting
+
+## d. Interpretation
+
+
+# Problem 2. Data visualization
+
+## a. Cleaning and summarizing
+
+```{r}
+#| label: data cleaning
+#| message: false
+#| warning: false
+
+# creating new object called 'kelp_clean'
+kelp_clean <- kelp %>% 
+  # cleaning up column names
+  clean_names() %>% 
+  # filter by site 
+  filter(site %in% c("IVEE", "NAPL", "CARP")) %>%
+  # creating a new column called site_name, relabeling species with full name
+  mutate(site_name = case_when(
+         site == "NAPL" ~ "Naples",
+         site == "IVEE" ~ "Isla Vista",
+         site == "CARP" ~ "Carpinteria"
+)) %>% 
+  # convert to factor and set factor level order
+  mutate(site_name = as_factor(site_name),
+         site_name = fct_relevel(site_name, 
+                                 "Naples", "Isla Vista", "Carpinteria")) %>% 
+  group_by(site_name, year) %>% # group for summarizing
+  summarize(mean_fronds = mean(fronds)) %>% # calculate mean fronds per group
+  ungroup() # remove grouping structure
+```
+
+## b. Understanding the data
+
+## c. Visualize the data
+
+## d. Interpretation
+
+
+# Problem 3. Data analysis
+
+## a. Response variable
+
+## b. Purpose of study
+
+## c. Table of models
+
+## d. Run the models
+
+## e. Select the best model
+
+## f. Check the diagnostics
+
+## g. Visualize the model predictions
+
+## h. Write a caption for your figure.
+
+## i. Calculate model predictions
+
+## j. Interpret your results
+
+
+# Problem 4. Affective and exploratory visualizations
+
+## a. Comparing visualizations
+
+## b. Designing an analysis
+
+## c. Check any assumptions and run your analysis
+
+## d. Create a visualization
+
+## e. Write a caption
+
+## f. Write about your results
+
+## g. Sharing your affective visualization
+Attendance of week 10 workshop!
+
+
+
+
+
+
+
