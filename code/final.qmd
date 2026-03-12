@@ -92,7 +92,7 @@ kelp_clean <- kelp %>%
 ## d. Run the models
 
 ## e. Select the best model
-The best model as determined by Akaike’s Information Criterion (AIC)… 
+The best model as determined by Akaike’s Information Criterion (AIC) (insert answer)
 
 Use the predictors and the response variable to describe the model, not the model number that you assigned.
 
