@@ -70,7 +70,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="final_files/libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="final_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="final_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="final_files/libs/bootstrap/bootstrap-8a90b9f5b4ffc9e7e842c6f615795ee6.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="final_files/libs/bootstrap/bootstrap-853f828e2bc6297b835e4f7beb089bb8.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
 
 </head>
@@ -113,7 +113,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></li>
   <li><a href="#problem-4.-affective-and-exploratory-visualizations" id="toc-problem-4.-affective-and-exploratory-visualizations" class="nav-link" data-scroll-target="#problem-4.-affective-and-exploratory-visualizations">Problem 4. Affective and exploratory visualizations</a>
   <ul class="collapse">
-  <li><a href="#a.-comparing-visualizations" id="toc-a.-comparing-visualizations" class="nav-link" data-scroll-target="#a.-comparing-visualizations">a. Comparing visualizations</a></li>
+  <li><a href="#a.-comparing-visualizations" id="toc-a.-comparing-visualizations" class="nav-link" data-scroll-target="#a.-comparing-visualizations">a. Comparing visualizations</a>
+  <ul class="collapse">
+  <li><a href="#how-are-the-visualizations-different-from-each-other-in-the-way-you-have-represented-your-data" id="toc-how-are-the-visualizations-different-from-each-other-in-the-way-you-have-represented-your-data" class="nav-link" data-scroll-target="#how-are-the-visualizations-different-from-each-other-in-the-way-you-have-represented-your-data">How are the visualizations different from each other in the way you have represented your data?</a></li>
+  <li><a href="#what-similarities-do-you-see-between-all-your-visualizations" id="toc-what-similarities-do-you-see-between-all-your-visualizations" class="nav-link" data-scroll-target="#what-similarities-do-you-see-between-all-your-visualizations">What similarities do you see between all your visualizations?</a></li>
+  <li><a href="#what-patterns-e.g.-differences-in-meanscountsproportionsmedians-trends-through-time-relationships-between-variables-do-you-see-in-each-visualization" id="toc-what-patterns-e.g.-differences-in-meanscountsproportionsmedians-trends-through-time-relationships-between-variables-do-you-see-in-each-visualization" class="nav-link" data-scroll-target="#what-patterns-e.g.-differences-in-meanscountsproportionsmedians-trends-through-time-relationships-between-variables-do-you-see-in-each-visualization">What patterns (e.g.&nbsp;differences in means/counts/proportions/medians, trends through time, relationships between variables) do you see in each visualization?</a></li>
+  <li><a href="#are-these-different-between-visualizations-if-so-why-if-not-why-not" id="toc-are-these-different-between-visualizations-if-so-why-if-not-why-not" class="nav-link" data-scroll-target="#are-these-different-between-visualizations-if-so-why-if-not-why-not">Are these different between visualizations? If so, why? If not, why not?</a></li>
+  <li><a href="#what-kinds-of-feedback-did-you-get-during-week-9-in-workshop-or-from-the-instructors" id="toc-what-kinds-of-feedback-did-you-get-during-week-9-in-workshop-or-from-the-instructors" class="nav-link" data-scroll-target="#what-kinds-of-feedback-did-you-get-during-week-9-in-workshop-or-from-the-instructors">What kinds of feedback did you get during week 9 in workshop or from the instructors?</a></li>
+  <li><a href="#how-did-you-implement-or-try-those-suggestions-if-you-tried-and-kept-those-suggestions-explain-how-and-why-if-not-explain-why-not." id="toc-how-did-you-implement-or-try-those-suggestions-if-you-tried-and-kept-those-suggestions-explain-how-and-why-if-not-explain-why-not." class="nav-link" data-scroll-target="#how-did-you-implement-or-try-those-suggestions-if-you-tried-and-kept-those-suggestions-explain-how-and-why-if-not-explain-why-not.">How did you implement or try those suggestions? If you tried and kept those suggestions, explain how and why; if not, explain why not.</a></li>
+  </ul></li>
   <li><a href="#b.-designing-an-analysis" id="toc-b.-designing-an-analysis" class="nav-link" data-scroll-target="#b.-designing-an-analysis">b. Designing an analysis</a></li>
   <li><a href="#c.-check-any-assumptions-and-run-your-analysis" id="toc-c.-check-any-assumptions-and-run-your-analysis" class="nav-link" data-scroll-target="#c.-check-any-assumptions-and-run-your-analysis">c.&nbsp;Check any assumptions and run your analysis</a></li>
   <li><a href="#d.-create-a-visualization" id="toc-d.-create-a-visualization" class="nav-link" data-scroll-target="#d.-create-a-visualization">d.&nbsp;Create a visualization</a></li>
@@ -238,9 +246,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="e.-select-the-best-model" class="level2">
 <h2 class="anchored" data-anchor-id="e.-select-the-best-model">e. Select the best model</h2>
+<p>The best model as determined by Akaike’s Information Criterion (AIC)…</p>
+<p>Use the predictors and the response variable to describe the model, not the model number that you assigned.</p>
 </section>
 <section id="f.-check-the-diagnostics" class="level2">
 <h2 class="anchored" data-anchor-id="f.-check-the-diagnostics">f.&nbsp;Check the diagnostics</h2>
+<p>plot ( simulateResiduals(bat_mod) ) are they uniformally distributed? not normally.</p>
 </section>
 <section id="g.-visualize-the-model-predictions" class="level2">
 <h2 class="anchored" data-anchor-id="g.-visualize-the-model-predictions">g. Visualize the model predictions</h2>
@@ -259,9 +270,40 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>Problem 4. Affective and exploratory visualizations</h1>
 <section id="a.-comparing-visualizations" class="level2">
 <h2 class="anchored" data-anchor-id="a.-comparing-visualizations">a. Comparing visualizations</h2>
+<section id="how-are-the-visualizations-different-from-each-other-in-the-way-you-have-represented-your-data" class="level3">
+<h3 class="anchored" data-anchor-id="how-are-the-visualizations-different-from-each-other-in-the-way-you-have-represented-your-data">How are the visualizations different from each other in the way you have represented your data?</h3>
+<p>My affective visualization and visualizations from homework 2 are represented in very different ways. In homework 2, I was comparing 2 variables at a time trying to find a correlative relationship. For my affective visualization, I represented all my variables in a creative and artistic way. The data observations are abstract and harder to decode and find relationships between them.</p>
+</section>
+<section id="what-similarities-do-you-see-between-all-your-visualizations" class="level3">
+<h3 class="anchored" data-anchor-id="what-similarities-do-you-see-between-all-your-visualizations">What similarities do you see between all your visualizations?</h3>
+<p>Similarities I see are for the different categories, I use different colors/shapes. For my cateforical visualization, café = gold, library = blue. For my affective visualization, jade plants = café, pilea plants = library. For the study duration vs tasks completed, the tasks comeplted are in green. There is definitely a creative, colorful component to all visualizations.</p>
+</section>
+<section id="what-patterns-e.g.-differences-in-meanscountsproportionsmedians-trends-through-time-relationships-between-variables-do-you-see-in-each-visualization" class="level3">
+<h3 class="anchored" data-anchor-id="what-patterns-e.g.-differences-in-meanscountsproportionsmedians-trends-through-time-relationships-between-variables-do-you-see-in-each-visualization">What patterns (e.g.&nbsp;differences in means/counts/proportions/medians, trends through time, relationships between variables) do you see in each visualization?</h3>
+<p>In the continuous visualization (study duration vs tasks completed), there is a general positive trend, so as study duration increases, tasks completed also does. In the categorical visualization(study location vs tasks completed), the medians in the boxplots are compared. There is a higher median in Library study sessions than the café. In the affective visualization, all variables are presented in the form of houseplants on a watercolor painting of a café. The amount of petals on each branch represents the tasks completed, with other doodles representing all of the other variables. You can extrapolate other relationships by such as comparing the amount of friends with me or the busyness of the location with the amount of petals on a branch to asses my productivity. You can see that generally with my more friends studying with me, there are less tasks completed.</p>
+</section>
+<section id="are-these-different-between-visualizations-if-so-why-if-not-why-not" class="level3">
+<h3 class="anchored" data-anchor-id="are-these-different-between-visualizations-if-so-why-if-not-why-not">Are these different between visualizations? If so, why? If not, why not?</h3>
+<p>The relationships found are all relatively similar, and I am not interpretting the data in different ways across all visualizations.</p>
+</section>
+<section id="what-kinds-of-feedback-did-you-get-during-week-9-in-workshop-or-from-the-instructors" class="level3">
+<h3 class="anchored" data-anchor-id="what-kinds-of-feedback-did-you-get-during-week-9-in-workshop-or-from-the-instructors">What kinds of feedback did you get during week 9 in workshop or from the instructors?</h3>
+<p>The feedback I got was that I could find a creative way to put a “code” of my variables so you can read the data observations on a coffee specials sign.</p>
+</section>
+<section id="how-did-you-implement-or-try-those-suggestions-if-you-tried-and-kept-those-suggestions-explain-how-and-why-if-not-explain-why-not." class="level3">
+<h3 class="anchored" data-anchor-id="how-did-you-implement-or-try-those-suggestions-if-you-tried-and-kept-those-suggestions-explain-how-and-why-if-not-explain-why-not.">How did you implement or try those suggestions? If you tried and kept those suggestions, explain how and why; if not, explain why not.</h3>
+<p>I loved that idea, so I put a code of variables on the window as window art and on a sign outside the café in my painting.</p>
+</section>
 </section>
 <section id="b.-designing-an-analysis" class="level2">
 <h2 class="anchored" data-anchor-id="b.-designing-an-analysis">b. Designing an analysis</h2>
+<p>The appropriate analysis for my personal data is the Mann-Whitney U test because it is a non-parametric and has a non-normally distribution two-sample t-test that can compare medians.</p>
+<ol type="a">
+<li>Comparing visualizations Compare and contrast your affective visualization from Homework 3 and the exploratory visualizations you made for Homework 2. In 1-3 sentences each, explain:</li>
+</ol>
+<p>How are the visualizations different from each other in the way you have represented your data? What similarities do you see between all your visualizations? What patterns (e.g.&nbsp;differences in means/counts/proportions/medians, trends through time, relationships between variables) do you see in each visualization? Are these different between visualizations? If so, why? If not, why not? What kinds of feedback did you get during week 9 in workshop or from the instructors? How did you implement or try those suggestions? If you tried and kept those suggestions, explain how and why; if not, explain why not. b. Designing an analysis Based on your response variable and one of your potential predictor variables (your focal variable or otherwise), propose one analysis that we talked about this quarter that you could apply to answer your research question(s).</p>
+<p>Additionally, explain why this analysis is appropriate with regard to:</p>
+<p>your question your variables and what types of variables they are</p>
 </section>
 <section id="c.-check-any-assumptions-and-run-your-analysis" class="level2">
 <h2 class="anchored" data-anchor-id="c.-check-any-assumptions-and-run-your-analysis">c.&nbsp;Check any assumptions and run your analysis</h2>

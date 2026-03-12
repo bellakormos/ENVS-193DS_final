@@ -92,8 +92,16 @@ kelp_clean <- kelp %>%
 ## d. Run the models
 
 ## e. Select the best model
+The best model as determined by Akaike’s Information Criterion (AIC)… 
+
+Use the predictors and the response variable to describe the model, not the model number that you assigned.
 
 ## f. Check the diagnostics
+plot ( 
+simulateResiduals(bat_mod)
+)
+are they uniformally distributed? not normally. 
+
 
 ## g. Visualize the model predictions
 
@@ -107,8 +115,42 @@ kelp_clean <- kelp %>%
 # Problem 4. Affective and exploratory visualizations
 
 ## a. Comparing visualizations
+### How are the visualizations different from each other in the way you have represented your data?
+In homework 2, I was comparing 2 variables at a time trying to find a correlative relationship. For my affective visualization, the data observations are represented artistically, abstractly, and it is harder to decode the data and find the statistical relationships. 
+
+### What similarities do you see between all your visualizations?
+In the different categories of my data across all my visualizations, I use different colors/shapes to distinguish the variables. For my categorical visualization, café = gold, library = blue; for my affective visualization, jade plants = café, pilea plants = library; for the study duration vs tasks completed, the tasks completed are in green. There is definitely a creative, colorful component to all visualizations. 
+
+### What patterns (e.g. differences in means/counts/proportions/medians, trends through time, relationships between variables) do you see in each visualization? 
+In the continuous visualization, there is a general positive trend with increasing study duration, also increasing tasks completed. In the categorical visualization, the medians of tasks completed between the library vs café in the boxplots are compared, and there is a higher median in library study sessions than the café sessions. In the affective visualization, all variables are presented in the form of houseplants and since all variables are represented, you can extrapolate more relationships such as comparing the amount of friends with me or the busyness of the location in an absract way. 
+
+### Are these different between visualizations? If so, why? If not, why not?
+The relationships found are all relatively similar, and I am not interpretting the data in different ways across all visualizations. 
+
+### What kinds of feedback did you get during week 9 in workshop or from the instructors?
+The feedback I got was that I could find a creative way to put a "code" of my variables so you can read the data observations on a coffee specials sign. 
+
+### How did you implement or try those suggestions? If you tried and kept those suggestions, explain how and why; if not, explain why not.
+I loved that idea, so I put a code of variables on the window as window art and on a sign outside the café in my painting.  
 
 ## b. Designing an analysis
+The appropriate analysis for my personal data is the Mann-Whitney U test because it is a non-parametric and has a non-normally distribution two-sample t-test that can compare medians. 
+
+
+a. Comparing visualizations
+Compare and contrast your affective visualization from Homework 3 and the exploratory visualizations you made for Homework 2. In 1-3 sentences each, explain:
+
+How are the visualizations different from each other in the way you have represented your data?
+What similarities do you see between all your visualizations?
+What patterns (e.g. differences in means/counts/proportions/medians, trends through time, relationships between variables) do you see in each visualization? Are these different between visualizations? If so, why? If not, why not?
+What kinds of feedback did you get during week 9 in workshop or from the instructors? How did you implement or try those suggestions? If you tried and kept those suggestions, explain how and why; if not, explain why not.
+b. Designing an analysis
+Based on your response variable and one of your potential predictor variables (your focal variable or otherwise), propose one analysis that we talked about this quarter that you could apply to answer your research question(s).
+
+Additionally, explain why this analysis is appropriate with regard to:
+
+your question
+your variables and what types of variables they are
 
 ## c. Check any assumptions and run your analysis
 
