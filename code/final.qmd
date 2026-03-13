@@ -25,6 +25,7 @@ library(here) # identifies computer's root folder
 library(lubridate) # work with date/time data
 library(rstatix) # load rstatix for cliff's delta
 library(rcompanion) # also cliff's delta
+library(effsize) # add this — contains cliff.delta()
 ```
 
 Reading in data:
@@ -173,7 +174,6 @@ ggplot(data = my_clean_data,
         panel.grid.minor = element_blank(), # remove minor gridlines
         axis.line.x = element_line(color = "black"))
 ```
-
 Both the café and library distributions are unimodal and right-skewed, indicating similar distributional shape, so all assumptions are met."
 
 ### Wilcoxon rank sum exact test
@@ -245,11 +245,13 @@ ggplot(data = my_clean_data,
         axis.line.x = element_line(color = "black"),
         axis.line.y = element_line(color = "black"))
 ```
-```
 
 ## e. Write a caption
+**Figure 2. Distribution of tasks completed by study location across all study sessions (Café vs. Library)** The most recent observation: March 4, 2026. Each circle point represents a study session. The library boxplot (in blue) has higher median (5 tasks), and the café study sessions (in gold) shows a tighter interquartile range and smaller median (3 tasks).
 
 ## f. Write about your results
+I did not find a significant difference in median tasks completed between café (n = 16, median = 3) and library (n = 15, median = 5) study sessions (Wilcoxon rank-sum test: W = 103.5, p = 0.72, α = 0.05), with a negligible effect size (Cliff's δ = -0.08). Although the library median was larger by 2 tasks, the large p-value and negligible effect size suggest this difference is not meaningful and could be due to random chance. Study location does not appear to have a significant influence on my productivity as measured by tasks completed per session. 
+
 
 ## g. Sharing your affective visualization
 
