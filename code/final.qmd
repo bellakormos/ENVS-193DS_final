@@ -10,7 +10,7 @@ execute:
   warning: false # use this to make sure warnings don't show upl
 ---
 
-Link to my github: [GitHub Repository](https://github.com/bellakormos/ENVS-193DS_homework-03)
+[GitHub Repo](https://github.com/bellakormos/ENVS-193DS_homework-03)
 
 # Homework Set Up
 
@@ -22,7 +22,9 @@ Reading in packages:
 library(tidyverse) # load in all packages
 library(janitor) # clean column names
 library(here) # identifies computer's root folder
-
+library(lubridate) # work with date/time data
+library(rstatix) # load rstatix for cliff's delta
+library(rcompanion) # also cliff's delta
 ```
 
 Reading in data:
@@ -31,6 +33,7 @@ Reading in data:
 #| label: reading in data
 #| message: false
 kelp <- read_csv(here("data", "kelp.csv")) # store the data and save object as "kelp" 
+my_data <- read_csv(here("data", "official_personal_data.csv")) # Read in the personal data as an object named "my_data"
 ```
 
 # Problem 1. Research writing
@@ -42,7 +45,6 @@ kelp <- read_csv(here("data", "kelp.csv")) # store the data and save object as "
 ## c. Suggestions for rewriting
 
 ## d. Interpretation
-
 
 # Problem 2. Data visualization
 
@@ -80,7 +82,6 @@ kelp_clean <- kelp %>%
 
 ## d. Interpretation
 
-
 # Problem 3. Data analysis
 
 ## a. Response variable
@@ -92,16 +93,14 @@ kelp_clean <- kelp %>%
 ## d. Run the models
 
 ## e. Select the best model
+
 The best model as determined by Akaike’s Information Criterion (AIC) (insert answer)
 
 Use the predictors and the response variable to describe the model, not the model number that you assigned.
 
 ## f. Check the diagnostics
-plot ( 
-simulateResiduals(bat_mod)
-)
-are they uniformally distributed? not normally. 
 
+plot ( simulateResiduals(bat_mod) ) are they uniformally distributed? not normally.
 
 ## g. Visualize the model predictions
 
@@ -111,61 +110,147 @@ are they uniformally distributed? not normally.
 
 ## j. Interpret your results
 
-
 # Problem 4. Affective and exploratory visualizations
 
 ## a. Comparing visualizations
+
 ### How are the visualizations different from each other in the way you have represented your data?
-In homework 2, I was comparing 2 variables at a time trying to find a correlative relationship. For my affective visualization, the data observations are represented artistically, abstractly, and it is harder to decode the data and find the statistical relationships. 
+
+In homework 2, I was comparing 2 variables at a time trying to find a correlative relationship. For my affective visualization, the data observations are represented artistically, abstractly, and it is harder to decode the data and find the statistical relationships.
 
 ### What similarities do you see between all your visualizations?
-In the different categories of my data across all my visualizations, I use different colors/shapes to distinguish the variables. For my categorical visualization, café = gold, library = blue; for my affective visualization, jade plants = café, pilea plants = library; for the study duration vs tasks completed, the tasks completed are in green. There is definitely a creative, colorful component to all visualizations. 
 
-### What patterns (e.g. differences in means/counts/proportions/medians, trends through time, relationships between variables) do you see in each visualization? 
-In the continuous visualization, there is a general positive trend with increasing study duration, also increasing tasks completed. In the categorical visualization, the medians of tasks completed between the library vs café in the boxplots are compared, and there is a higher median in library study sessions than the café sessions. In the affective visualization, all variables are presented in the form of houseplants and since all variables are represented, you can extrapolate more relationships such as comparing the amount of friends with me or the busyness of the location in an absract way. 
+In the different categories of my data across all my visualizations, I use different colors/shapes to distinguish the variables. For my categorical visualization, café = gold, library = blue; for my affective visualization, jade plants = café, pilea plants = library; for the study duration vs tasks completed, the tasks completed are in green. There is definitely a creative, colorful component to all visualizations.
+
+### What patterns (e.g. differences in means/counts/proportions/medians, trends through time, relationships between variables) do you see in each visualization?
+
+In the continuous visualization, there is a general positive trend: as study duration increases, so does the tasks completed. In the categorical visualization, the medians of tasks completed between the library vs café in the boxplots are compared, and there is a higher median in library study sessions than the café sessions. In the affective visualization, all variables are presented in the form of houseplants and since all variables are represented, you can extrapolate relationships such as comparing the amount of friends with me or the busyness of the location.
 
 ### Are these different between visualizations? If so, why? If not, why not?
-The relationships found are all relatively similar, and I am not interpretting the data in different ways across all visualizations. 
 
-### What kinds of feedback did you get during week 9 in workshop or from the instructors?
-The feedback I got was that I could find a creative way to put a "code" of my variables so you can read the data observations on a coffee specials sign. 
+The relationships found are all relatively similar, and I am not interpreting the data in different ways across all visualizations.
 
-### How did you implement or try those suggestions? If you tried and kept those suggestions, explain how and why; if not, explain why not.
-I loved that idea, so I put a code of variables on the window as window art and on a sign outside the café in my painting.  
+### What kinds of feedback did you get during week 9 in workshop or from the instructors? How did you implement or try those suggestions? If you tried and kept those suggestions, explain how and why; if not, explain why not.
+
+The feedback I got was that I could find a creative way to put a "code" of my variables so you can read the data observations on a coffee specials sign. I loved this idea, so I put a code of variables on the window as window art and on a sign outside the café in my painting.
 
 ## b. Designing an analysis
-The appropriate analysis for my personal data is the Mann-Whitney U test because it is a non-parametric and has a non-normally distribution two-sample t-test that can compare medians. 
 
-
-a. Comparing visualizations
-Compare and contrast your affective visualization from Homework 3 and the exploratory visualizations you made for Homework 2. In 1-3 sentences each, explain:
-
-How are the visualizations different from each other in the way you have represented your data?
-What similarities do you see between all your visualizations?
-What patterns (e.g. differences in means/counts/proportions/medians, trends through time, relationships between variables) do you see in each visualization? Are these different between visualizations? If so, why? If not, why not?
-What kinds of feedback did you get during week 9 in workshop or from the instructors? How did you implement or try those suggestions? If you tried and kept those suggestions, explain how and why; if not, explain why not.
-b. Designing an analysis
-Based on your response variable and one of your potential predictor variables (your focal variable or otherwise), propose one analysis that we talked about this quarter that you could apply to answer your research question(s).
-
-Additionally, explain why this analysis is appropriate with regard to:
-
-your question
-your variables and what types of variables they are
+The appropriate analysis for my personal data is the Mann-Whitney U test.It is appropriate here because my response variable (tasks completed) is numeric and my predictor variable (study location) is categorical with two levels (café and library). Given the small sample size and non-normal distribution (non-centered medians in boxplot), a non-parametric test that compares medians is more appropriate than a t-test.
 
 ## c. Check any assumptions and run your analysis
 
+### Check all assumptions
+
+**Check 1: Random Sample** Each data point represents an independently recorded study session, and sessions were not deliberately selected to favor a location, so this assumption is met.
+
+**Check 2: Visual**
+
+```{r}
+#| label: histogram-assumption
+#| message: false
+#| warning: false
+my_clean_data <- my_data |> 
+  clean_names() # columns names lower case with underscores
+# base layer: ggplot using cleaned data-set
+ggplot(data = my_clean_data,
+       aes(x = tasks_completed, # tasks completed on x-axis
+           fill = study_location)) + # fill bars by study location
+  # first layer: histogram
+  geom_histogram(binwidth = 1,
+                 alpha = 0.7, # semi-transparent bars
+                 color = "white") + # white outline between bars
+  facet_wrap(~study_location) + # separate panel for each location
+  scale_x_continuous(breaks = seq(0, 12, by = 1)) + # whole number x-axis ticks
+  scale_fill_manual(values = c("Café" = "#FEBC11", # gold for café
+                               "Library" = "#4169E1")) + #blue for library
+  # Label axes and plot 
+  labs(title = "Distribution of Tasks Completed by Study Location", 
+       x = "Tasks Completed",
+       y = "Number of Study sessions") +
+  theme_linedraw() +
+  theme(legend.position = "none",
+        panel.grid.minor = element_blank(), # remove minor gridlines
+        axis.line.x = element_line(color = "black"))
+```
+
+Both the café and library distributions are unimodal and right-skewed, indicating similar distributional shape, so all assumptions are met."
+
+### Wilcoxon rank sum exact test
+
+**Summary of stats: median and n values**
+
+```{r}
+#| label: summary stats
+#| message: false
+#| warning: false
+my_clean_data %>% 
+  group_by(study_location) |> # group by café vs library
+  summarize(
+    median = median(tasks_completed), # calculate median tasks completed
+    n = n() # count number of study sessions per group
+  )
+```
+
+**Run a Wilcoxon test**
+```{r}
+#| label: wilcoxon test
+#| message: false
+#| warning: false
+wilcox.test(tasks_completed ~ study_location, # compare tasks completed by study location
+            data = my_clean_data) # use cleaned personal data
+```
+
+**Calculate effect size using Cliff's Delta**
+```{r}
+#| label: effect-size
+#| message: false
+#| warning: false
+
+cliff.delta(tasks_completed ~ study_location,
+            data = my_clean_data)
+```
+I found a small (Cliff’s δ = -0.08) difference in median task completed between cafés (n = 5) and the library(n = 15). (Wilcoxon rank-sum test, W = 103.5, p = 0.72, ⍺ = 0.05). Tasks completed tended to be smaller in cafés (median = 3) than in the library(median = 5). 
+
 ## d. Create a visualization
+```{r}
+#| label: mann-whitney-visualization
+#| message: false
+#| warning: false
+#| code-fold: true
+# base layer: ggplot using cleaned data-set
+ggplot(data = my_clean_data,
+       aes(x = study_location, # categorical predictor on x-axis
+           y = tasks_completed)) + # response variable on y-axis
+  # first layer: boxplot
+  geom_boxplot(aes(fill = study_location), # fill boxplot by study location
+               width = 0.5,
+               outliers = FALSE, # avoid outliers being shown twice
+) + # boxplot width
+  # second layer: add jittered points
+  geom_jitter(width = 0.2, # horizontal spread
+              height = 0, # no vertical jitter
+              shape = 21) + # open circle points
+  scale_fill_manual(values = c(
+    "Café" = "#FEBC11", # gold for café
+    "Library" = "#4169E1")) + # blue for library
+  # add labels for axes and title plot
+  labs(x = "Study Location",
+       y = "Tasks Completed (n)") +  
+  # edit theme, and add grid lines
+  theme_minimal() + 
+  theme(legend.position = "none", # remove legend
+        panel.grid.minor = element_blank(),
+        panel.grid.major.x = element_blank(),
+        axis.line.x = element_line(color = "black"),
+        axis.line.y = element_line(color = "black"))
+```
+```
 
 ## e. Write a caption
 
 ## f. Write about your results
 
 ## g. Sharing your affective visualization
+
 Attendance of week 10 workshop!
-
-
-
-
-
-
-
