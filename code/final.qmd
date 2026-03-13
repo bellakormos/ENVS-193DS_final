@@ -5,6 +5,7 @@ author: "Bella Kormos"
 format:
   html:
     toc: true # use this to display a table of contents
+    mainfont: "EB Garamond"
 execute:
   message: false # use this to make sure messages don't show up
   warning: false # use this to make sure warnings don't show upl
@@ -26,6 +27,8 @@ library(lubridate) # work with date/time data
 library(rstatix) # load rstatix for cliff's delta
 library(rcompanion) # also cliff's delta
 library(effsize) # add this — contains cliff.delta()
+library(showtext)
+library(DHARMa)
 ```
 
 Reading in data:
@@ -40,10 +43,13 @@ my_data <- read_csv(here("data", "official_personal_data.csv")) # Read in the pe
 # Problem 1. Research writing
 
 ## a. Transparent statistical methods
+In part 1, they used a simple linear regression, as they are testing whether precipitation (a continuous predictor variable predicts the flooded wetland area (a continuous response variable). In part 2, they used a Kruskal-Wallis test, as they are comparing median flooded wetland area across more than two groups (five water year classifications), and the use of the word "median" indicates a non-parametric test was appropriate and applied.
 
 ## b. Figure needed
+A figure that can could accompany the statement is a by a side-by-side boxplot of wetland flooding area across the five water year classifications. The water year classification (wet, above normal, below normal, dry, and critical drought) should be on the x-axis, and flooded wetland area (m²) should be on the y-axis. Each group can be represented by a vertical boxplot with the middle line being the median. The range of the plot spans the 1st and 3rd quartiles (IQR range), and the whiskers extend to 1.5 × IQR. The Kruskal-Wallis test compares medians and is therefore the most important visual component to assess and compare the central tendencies. The raw data points should also be jittered behind the boxplots so that the reader can see the actual data observations and assess the spread and sample size of each group. 
 
 ## c. Suggestions for rewriting
+
 
 ## d. Interpretation
 
@@ -174,6 +180,10 @@ ggplot(data = my_clean_data,
         panel.grid.minor = element_blank(), # remove minor gridlines
         axis.line.x = element_line(color = "black"))
 ```
+
+
+
+
 Both the café and library distributions are unimodal and right-skewed, indicating similar distributional shape, so all assumptions are met."
 
 ### Wilcoxon rank sum exact test
@@ -210,6 +220,7 @@ wilcox.test(tasks_completed ~ study_location, # compare tasks completed by study
 cliff.delta(tasks_completed ~ study_location,
             data = my_clean_data)
 ```
+
 I found a small (Cliff’s δ = -0.08) difference in median task completed between cafés (n = 5) and the library(n = 15). (Wilcoxon rank-sum test, W = 103.5, p = 0.72, ⍺ = 0.05). Tasks completed tended to be smaller in cafés (median = 3) than in the library(median = 5). 
 
 ## d. Create a visualization
@@ -246,13 +257,17 @@ ggplot(data = my_clean_data,
         axis.line.y = element_line(color = "black"))
 ```
 
+ 
+ 
 ## e. Write a caption
-**Figure 2. Distribution of tasks completed by study location across all study sessions (Café vs. Library)** The most recent observation: March 4, 2026. Each circle point represents a study session. The library boxplot (in blue) has higher median (5 tasks), and the café study sessions (in gold) shows a tighter interquartile range and smaller median (3 tasks.)
+**Figure 2. Distribution of tasks completed by study location across all study sessions (Café vs. Library)** The most recent observation: March 4, 2026. Each circle point represents a study session. The library boxplot (in blue) has higher median (5 tasks), and the café study sessions (in gold) shows a tighter interquartile range and smaller median (3 tasks). 
 
 ## f. Write about your results
 I did not find a significant difference in median tasks completed between café (n = 16, median = 3) and library (n = 15, median = 5) study sessions (Wilcoxon rank-sum test: W = 103.5, p = 0.72, α = 0.05), with a negligible effect size (Cliff's δ = -0.08). Although the library median was larger by 2 tasks, the large p-value and negligible effect size suggest this difference is not meaningful and could be due to random chance. Study location does not appear to have a significant influence on my productivity as measured by tasks completed per session. 
 
 
 ## g. Sharing your affective visualization
-
 Attendance of week 10 workshop!
+![My affective visualization](affective.png)
+
+ 
