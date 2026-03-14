@@ -29,6 +29,11 @@ library(rcompanion) # also cliff's delta
 library(effsize) # add this — contains cliff.delta()
 library(showtext)
 library(DHARMa)
+
+# fonts
+font_add_google("EB Garamond", "eb_garamond") # load font "EB Garamond" and save as "eb_garamond"
+showtext_auto() # enable show text
+showtext_opts(dpi = 200) # change show text size
 ```
 
 Reading in data:
@@ -46,12 +51,14 @@ my_data <- read_csv(here("data", "official_personal_data.csv")) # Read in the pe
 In part 1, they used a simple linear regression, as they are testing whether precipitation (a continuous predictor variable predicts the flooded wetland area (a continuous response variable). In part 2, they used a Kruskal-Wallis test, as they are comparing median flooded wetland area across more than two groups (five water year classifications), and the use of the word "median" indicates a non-parametric test was appropriate and applied.
 
 ## b. Figure needed
-A figure that can could accompany the statement is a by a side-by-side boxplot of wetland flooding area across the five water year classifications. The water year classification (wet, above normal, below normal, dry, and critical drought) should be on the x-axis, and flooded wetland area (m²) should be on the y-axis. Each group can be represented by a vertical boxplot with the middle line being the median. The range of the plot spans the 1st and 3rd quartiles (IQR range), and the whiskers extend to 1.5 × IQR. The Kruskal-Wallis test compares medians and is therefore the most important visual component to assess and compare the central tendencies. The raw data points should also be jittered behind the boxplots so that the reader can see the actual data observations and assess the spread and sample size of each group. 
+A figure that can could accompany the statement is a by a side-by-side boxplot of wetland flooding area across the five water year classifications. The water year classification (wet, above normal, below normal, dry, and critical drought) should be on the x-axis, and flooded wetland area (m²) should be on the y-axis. Each group can be represented by a vertical boxplot with the middle line being the median. the range of the plot spaninng the 1st and 3rd quartiles (IQR range), and the whiskers extending to 1.5 × IQR. The Kruskal-Wallis test compares medians and is therefore the most important visual component to assess and compare the central tendencies. The raw data points should also be jittered behind the boxplots so that the reader can see the actual data observations and assess the spread and sample size of each group. 
 
 ## c. Suggestions for rewriting
+In part 1, we did not find a significant relationship between precipitation and flooded wetland area in the San Joaquin River Delta (simple linear regression: F(df model, df residual) = test statistic, p = 0.11, α = significance level, adjusted R² = effect size). Additionally, in part 2, we did not find a significant difference in median flooded wetland area across water year classifications (wet, above normal, below normal, dry, and critical drought)(Kruskal-Wallis test: H(df) = test statistic, p = 0.12, α = significance level).
 
 
 ## d. Interpretation
+One additional variable that could influence flooded wetland area is the water infrastructure investment (if a land parcel has received funding through wetland incentive programs), which is a binary categorical variable (yes or no). This variable might influence wetland flooding because infrastructure improvements and management may decide to either divert or retain water, controlling whether the wetland is flooded or not, as found by the Suisun Resource Conservation District incentive programs that encouraged landowners to retain flooded wetlands longer into the breeding season.
 
 # Problem 2. Data visualization
 
@@ -64,10 +71,9 @@ A figure that can could accompany the statement is a by a side-by-side boxplot o
 
 # creating new object called 'kelp_clean'
 kelp_clean <- kelp %>% 
-  # cleaning up column names
-  clean_names() %>% 
-  # filter by site 
-  filter(site %in% c("IVEE", "NAPL", "CARP")) %>%
+  clean_names() %>% # clean column names
+  filter(site %in% c("IVEE", "NAPL", "CARP")) %>% # filter by site
+  filter(!(date == "2000-09-22" & transect == "6" & quad == "40")) %>% 
   # creating a new column called site_name, relabeling species with full name
   mutate(site_name = case_when(
          site == "NAPL" ~ "Naples",
@@ -84,10 +90,41 @@ kelp_clean <- kelp %>%
 ```
 
 ## b. Understanding the data
+We want to exclude frond observations from the date 2000-09-22 in transect 6 in quad 40 because they are marked to have "-99999" fronds, which does not make biological sense, and therefore represents missing data. It is also outlined in the methods and protocols section that either this data was either not collected or was lost. 
 
 ## c. Visualize the data
+```{r}
+#| label: visualization
+#| message: false
+#| warning: false
+# base layer: ggplot using cleaned kelp data-set
+ggplot(data = kelp_clean,
+       aes(x = year, # set predictor variable
+           y = mean_fronds, # set response variable
+           color = site_name)) + # differentiate site by color
+  # first layer: add plot line and observations
+  geom_line() + 
+  geom_point() + 
+  # label x and y-axes, add title, and change legend title
+  scale_color_manual(values = c("Naples" = "#40916C", # Change three groups to customs colors
+                                "Isla Vista" = "#CA6702",
+                                "Carpinteria" = "#0096C7")) +
+  # label axes, add title, add color
+  labs(x = "Year", 
+       y = "Mean kelp fronds per year",
+       title = "Sites vary in mean kelp fronds per year",
+       color = "Site") +
+  # change theme, set font
+  theme_light(base_family = "eb_garamond") +
+  theme(plot.title = element_text(hjust = 0.5), # center the title
+        panel.border = element_blank()) # no border
+
+```
 
 ## d. Interpretation
+Isla Vista has the most variable mean kelp fronds per year, as shown by large peaks and valleys. The most notable spikes are around 2008 to nearly 40 fronds, and 2022 dropping down to approximately 0 fronds, producing the widest range of values across the time series and sites.
+
+Carpinteria has the least variable mean kelp fronds per year, as shown by a consistently low and relatively flat line across the study period. The fronds stay between 0 and 15, with no large peaks and valleys in comparison to the other sites.   
 
 # Problem 3. Data analysis
 
@@ -116,6 +153,7 @@ plot ( simulateResiduals(bat_mod) ) are they uniformally distributed? not normal
 ## i. Calculate model predictions
 
 ## j. Interpret your results
+
 
 # Problem 4. Affective and exploratory visualizations
 
