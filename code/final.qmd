@@ -30,6 +30,10 @@ library(effsize) # add this — contains cliff.delta()
 library(showtext)
 library(DHARMa)
 library(tidyr) # for drop_na
+library(knitr) # for kable() to work
+library(MuMIn) # for model select
+library(ggeffects)
+
 
 # fonts
 font_add_google("EB Garamond", "eb_garamond") # load font "EB Garamond" and save as "eb_garamond"
@@ -50,16 +54,19 @@ mopl <- read_csv(here("data", "mopl.csv")) # read in mopl data
 # Problem 1. Research writing
 
 ## a. Transparent statistical methods
+
 In part 1, they used a simple linear regression, as they are testing whether precipitation (a continuous predictor variable predicts the flooded wetland area (a continuous response variable). In part 2, they used a Kruskal-Wallis test, as they are comparing median flooded wetland area across more than two groups (five water year classifications), and the use of the word "median" indicates a non-parametric test was appropriate and applied.
 
 ## b. Figure needed
-A figure that can could accompany the statement is a by a side-by-side boxplot of wetland flooding area across the five water year classifications. The water year classification (wet, above normal, below normal, dry, and critical drought) should be on the x-axis, and flooded wetland area (m²) should be on the y-axis. Each group can be represented by a vertical boxplot with the middle line being the median. the range of the plot spaninng the 1st and 3rd quartiles (IQR range), and the whiskers extending to 1.5 × IQR. The Kruskal-Wallis test compares medians and is therefore the most important visual component to assess and compare the central tendencies. The raw data points should also be jittered behind the boxplots so that the reader can see the actual data observations and assess the spread and sample size of each group. 
+
+A figure that can could accompany the statement is a by a side-by-side boxplot of wetland flooding area across the five water year classifications. The water year classification (wet, above normal, below normal, dry, and critical drought) should be on the x-axis, and flooded wetland area (m²) should be on the y-axis. Each group can be represented by a vertical boxplot with the middle line being the median. the range of the plot spaninng the 1st and 3rd quartiles (IQR range), and the whiskers extending to 1.5 × IQR. The Kruskal-Wallis test compares medians and is therefore the most important visual component to assess and compare the central tendencies. The raw data points should also be jittered behind the boxplots so that the reader can see the actual data observations and assess the spread and sample size of each group.
 
 ## c. Suggestions for rewriting
+
 In part 1, we did not find a significant relationship between precipitation and flooded wetland area in the San Joaquin River Delta (simple linear regression: F(df model, df residual) = test statistic, p = 0.11, α = significance level, adjusted R² = effect size). Additionally, in part 2, we did not find a significant difference in median flooded wetland area across water year classifications (wet, above normal, below normal, dry, and critical drought)(Kruskal-Wallis test: H(df) = test statistic, p = 0.12, α = significance level).
 
-
 ## d. Interpretation
+
 One additional variable that could influence flooded wetland area is the water infrastructure investment (if a land parcel has received funding through wetland incentive programs), which is a binary categorical variable (yes or no). This variable might influence wetland flooding because infrastructure improvements and management may decide to either divert or retain water, controlling whether the wetland is flooded or not, as found by the Suisun Resource Conservation District incentive programs that encouraged landowners to retain flooded wetlands longer into the breeding season.
 
 # Problem 2. Data visualization
@@ -92,9 +99,11 @@ kelp_clean <- kelp %>%
 ```
 
 ## b. Understanding the data
-We want to exclude frond observations from the date 2000-09-22 in transect 6 in quad 40 because they are marked to have "-99999" fronds, which does not make biological sense, and therefore represents missing data. It is also outlined in the methods and protocols section that either this data was either not collected or was lost. 
+
+We want to exclude frond observations from the date 2000-09-22 in transect 6 in quad 40 because they are marked to have "-99999" fronds, which does not make biological sense, and therefore represents missing data. It is also outlined in the methods and protocols section that either this data was either not collected or was lost.
 
 ## c. Visualize the data
+
 ```{r}
 #| label: visualization
 #| message: false
@@ -124,11 +133,13 @@ ggplot(data = kelp_clean,
 ```
 
 ## d. Interpretation
+
 Isla Vista has the most variable mean kelp fronds per year, as shown by large peaks and valleys. The most notable spikes are around 2008 to nearly 40 fronds, and 2022 dropping down to approximately 0 fronds, producing the widest range of values across the time series and sites.
 
-Carpinteria has the least variable mean kelp fronds per year, as shown by a consistently low and relatively flat line across the study period. The fronds stay between 0 and 15, with no large peaks and valleys in comparison to the other sites.   
+Carpinteria has the least variable mean kelp fronds per year, as shown by a consistently low and relatively flat line across the study period. The fronds stay between 0 and 15, with no large peaks and valleys in comparison to the other sites.
 
 # Problem 3. Data analysis
+
 ```{r}
 #| label: cleaning
 #| message: false
@@ -150,7 +161,6 @@ slice_sample(
   n = 10
 )
 ```
-
 
 ```{r}
 #| label: visualizing-data
@@ -180,40 +190,123 @@ ggplot(data = mopl_clean,
 ```
 
 ## a. Response variable
-The response variable, nest site use vs non-use is a binary variable. 1 indicates a plover nest was found and monitored there, while 0 indicates an unused site where no plovers were detected and no nests were observed which allows for the anaysis of habitat characteristics. 
+
+The response variable, nest site use vs non-use is a binary variable. 1 indicates a plover nest was found and monitored there, while 0 indicates an unused site where no plovers were detected and no nests were observed which allows for the anaysis of habitat characteristics.
 
 ## b. Purpose of study
-*Visual Obstruction:* The visual obstruction at the nest(vo_nest) is a numeric continuous variable, measuring both vegetation height and density as a numeric range of values including fractional units. As visual obstruction increases, the probability of Mountain Plover nest site use would decrease because Mountain Plovers prefer open, bare-ground habitats with little vegetation to detect predators (discussion paragraph 4). 
 
-*Distance to prairie dog colony edge* Distance to prairie dog colony edge (edgedist) is a continuous variable, as distance can also take on any value in a range including fractional units. As distance to the prairie dog colony edge increases, the probability of Mountain Plover nest site use would decrease because 
+*Visual Obstruction:* The visual obstruction at the nest(vo_nest) is a numeric continuous variable, measuring both vegetation height and density as a numeric range of values including fractional units. As visual obstruction increases, the probability of Mountain Plover nest site use would decrease because Mountain Plovers prefer open, bare-ground habitats with little vegetation to detect predators (discussion paragraph 4).
 
-
-
-“Mountain Plovers are especially dependent on black-tailed prairie dogs (Cynomys ludovicianus) to engineer suitable habitat through soil disturbance and vegetation clipping (Dinsmore et al. 2005, Augustine and Derner 2012, Duchardt et al. 2018),” (Introduction, paragraph 3) and would therefore prefer being closer to praire dog colonies.
-
+*Distance to prairie dog colony edge* Distance to prairie dog colony edge (edgedist) is a continuous variable, as distance can also take on any value in a range including fractional units. As distance to the prairie dog colony edge increases, the probability of Mountain Plover nest site use would decrease because they engineer suitable plover habitat through, "soil disturbance and vegetation clipping," (Dinsmore et al. 2005, Augustine and Derner 2012, Duchardt et al. 2018)(Introduction, pararaph 3).
 
 ## c. Table of models
 
+| Model Number | Visual obstruction | Distance to prairie dog colony   |
+|--------------|--------------------|----------------------------------|
+| 0            | X                  | X                                |
+| 1            | ✔                  | ✔                                |
+| 2            | X.                 | ✔                                |
+| 3            | ✔                  | X                                |
+
 ## d. Run the models
+```{r}
+#| label: run models
+#| message: false
+#| warning: false
+#| #| include: false
+
+mopl_model0 <- glm(data = mopl_clean, # create a null glm model using cleaned mopl dataset
+                   used_bin ~ 1, # response
+                   family = "binomial") # use logistic regression glm
+
+mopl_model1 <- glm(data = mopl_clean,  # saturated glm model
+                   used_bin ~ edgedist + vo_nest, # response vs. edge distance and visual obstruction
+                   family = "binomial") # use logistic regression type glm
+
+mopl_model2 <- glm(data = mopl_clean, # create a glm model using clean mopl data
+                   used_bin ~ edgedist, # response vs. edge distance
+                   family = "binomial") # use logistic regression type glm
+
+mopl_model3 <- glm(data = mopl_clean, # create a glm model using clean mopl data
+                   used_bin ~ vo_nest, # response vs. visual obstruction
+                   family = "binomial") # use logistic regression type glm
+```
 
 ## e. Select the best model
+```{r}
+model.sel(mopl_model0, mopl_model1, mopl_model2, mopl_model3, rank = AIC) # select the best fitting model based on Akaike's Information Criterion (AIC)
+```
 
-The best model as determined by Akaike’s Information Criterion (AIC) (insert answer)
-
-Use the predictors and the response variable to describe the model, not the model number that you assigned.
+The best model as determined by Akaike’s Information Criterion (AIC) is the model using only visual obstruction as a predictor of nest site use (AIC = 322.2), as it has the lowest AIC value of the four candidate models.
 
 ## f. Check the diagnostics
-
-plot ( simulateResiduals(bat_mod) ) are they uniformally distributed? not normally.
+```{r}
+#| label: check diagnostics
+#| message: false
+#| warning: false
+plot(
+  simulateResiduals(mopl_model3) # display the DHARMa diagnostic plots for model 3
+)
+```
+The simulated residuals follow a uniform distribution, as shown visually by the points closely following the red theoretical line in the QQ plot. Additionally, the residuals vs model rank transformed predictions plot shows no obvious patterns, suggesting that all the model assumptions are met. 
 
 ## g. Visualize the model predictions
+```{r}
+#| label: visualize model predictions
+#| message: false
+#| warning: false
+
+# generate predicted probabilities from the best model 3
+mopl_preds <- ggpredict(mopl_model3, # generate predicted probabilities 
+                        terms = "vo_nest [0:19 by = 1]") # predict across range of visual obstruction values
+# base layer: ggplot using cleaned mopl dataset
+ggplot(mopl_clean, 
+       aes(x = vo_nest, # set x-axis to visual obstruction
+           y = used_bin)) + # set y-axis to binary nest site use
+  # first layer: add point observations, edit size, color, and add transparency
+  geom_point(size = 3,
+             color = "#7B5EA7",
+             alpha = 0.25) +
+  # second layer: add 95% CI around model predictions
+  geom_ribbon(data = mopl_preds,
+              aes(x = x,
+                  y = predicted,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              alpha = 0.3, # change the transparency of the ribbon
+              fill = "seagreen4") + # change the color of the ribbon
+  # third layer: add a model predictions line
+  geom_line(data = mopl_preds,
+            aes(x = x,
+                y = predicted),
+                color = "#4A3566") + # match ribbon color
+   # set y-axis to full probability range
+  scale_y_continuous(limits = c(0,1),
+                     breaks = c(0,1)) +
+  # add axes labels 
+  labs(x = "Visual obstruction (cm)",
+       y = "Probability of nest site occupancy (1 = Yes, 0 = No)") +
+  # change to light theme, change custom font 
+  theme_light(base_family = "eb_garamond") +
+  theme(panel.grid = element_blank()) # remove gridlines
+```
 
 ## h. Write a caption for your figure.
+**Figure 1. Mountain Plovers show higher probability of nest site occupancy at lower levels of visual obstruction.** The x-axis represents visual obstruction at the nest site in cm, and the y-axis represents the predicted probability of nest site occupancy (0 = unused, 1 = used). Each point represents an individual nest site observation. The black/dark purple line represents the model-predicted probability of nest site occupancy across the range of visual obstruction values. The green ribbon represents the 95% confidence interval around the model predictions. Data citation: Duchardt, Courtney; Beck, Jeffrey; Augustine, David (2020). Data from: Mountain Plover habitat selection and nest survival in relation to weather variability and spatial attributes of Black-tailed Prairie Dog disturbance [Dataset]. Dryad. https://doi.org/10.5061/dryad.ttdz08kt7.
 
 ## i. Calculate model predictions
+```{r}
+#| label: model predictions
+#| message: false
+#| warning: false
 
+# calculate the predicted probability of nest-site occupancy
+ggpredict(mopl_model3, # use best model 3
+          terms = "vo_nest [0]") # visual obstruction = 0
+
+```
 ## j. Interpret your results
-
+The predicted probability of Mountain Plover nest site occupancy at 0 on the index of visual obstruction is 73% (95% CI: 0.65, 0.80). Overall, the selected model shows a negative relationship between visual obstruction and probability of occupancy. As figure 1 shows, as visual obstruction increases, there is also a lower probability of plover nest sites being used with a sharp decrease around 5 cm and higher of obstruction. Biologically, reduced vegetation height and increased exposure of bare ground enhances the Mountain Plover habitat quality. Additionally, sparse vegetation in the range of 3–5 cm also creates ideal plover habitat because the layer of vegetation conceals their body while still allowing them to scan for and detect approaching predators, (Discussion, paragraph 4). 
 
 # Problem 4. Affective and exploratory visualizations
 
@@ -279,9 +372,6 @@ ggplot(data = my_clean_data,
         axis.line.x = element_line(color = "black"))
 ```
 
-
-
-
 Both the café and library distributions are unimodal and right-skewed, indicating similar distributional shape, so all assumptions are met."
 
 ### Wilcoxon rank sum exact test
@@ -301,6 +391,7 @@ my_clean_data %>%
 ```
 
 **Run a Wilcoxon test**
+
 ```{r}
 #| label: wilcoxon test
 #| message: false
@@ -310,6 +401,7 @@ wilcox.test(tasks_completed ~ study_location, # compare tasks completed by study
 ```
 
 **Calculate effect size using Cliff's Delta**
+
 ```{r}
 #| label: effect-size
 #| message: false
@@ -319,9 +411,10 @@ cliff.delta(tasks_completed ~ study_location,
             data = my_clean_data)
 ```
 
-I found a small (Cliff’s δ = -0.08) difference in median task completed between cafés (n = 5) and the library(n = 15). (Wilcoxon rank-sum test, W = 103.5, p = 0.72, ⍺ = 0.05). Tasks completed tended to be smaller in cafés (median = 3) than in the library(median = 5). 
+I found a small (Cliff’s δ = -0.08) difference in median task completed between cafés (n = 5) and the library(n = 15). (Wilcoxon rank-sum test, W = 103.5, p = 0.72, ⍺ = 0.05). Tasks completed tended to be smaller in cafés (median = 3) than in the library(median = 5).
 
 ## d. Create a visualization
+
 ```{r}
 #| label: mann-whitney-visualization
 #| message: false
@@ -355,17 +448,14 @@ ggplot(data = my_clean_data,
         axis.line.y = element_line(color = "black"))
 ```
 
- 
- 
 ## e. Write a caption
-**Figure 2. Distribution of tasks completed by study location across all study sessions (Café vs. Library)** The most recent observation: March 4, 2026. Each circle point represents a study session. The library boxplot (in blue) has higher median (5 tasks), and the café study sessions (in gold) shows a tighter interquartile range and smaller median (3 tasks). 
+
+**Figure 2. Distribution of tasks completed by study location across all study sessions (Café vs. Library)** The most recent observation: March 4, 2026. Each circle point represents a study session. The library boxplot (in blue) has higher median (5 tasks), and the café study sessions (in gold) shows a tighter interquartile range and smaller median (3 tasks).
 
 ## f. Write about your results
-I did not find a significant difference in median tasks completed between café (n = 16, median = 3) and library (n = 15, median = 5) study sessions (Wilcoxon rank-sum test: W = 103.5, p = 0.72, α = 0.05), with a negligible effect size (Cliff's δ = -0.08). Although the library median was larger by 2 tasks, the large p-value and negligible effect size suggest this difference is not meaningful and could be due to random chance. Study location does not appear to have a significant influence on my productivity as measured by tasks completed per session. 
 
+I did not find a significant difference in median tasks completed between café (n = 16, median = 3) and library (n = 15, median = 5) study sessions (Wilcoxon rank-sum test: W = 103.5, p = 0.72, α = 0.05), with a negligible effect size (Cliff's δ = -0.08). Although the library median was larger by 2 tasks, the large p-value and negligible effect size suggest this difference is not meaningful and could be due to random chance. Study location does not appear to have a significant influence on my productivity as measured by tasks completed per session.
 
 ## g. Sharing your affective visualization
-Attendance of week 10 workshop!
-![My affective visualization](affective.png)
 
- 
+Attendance of week 10 workshop! ![My affective visualization](affective.png)
