@@ -29,6 +29,7 @@ library(rcompanion) # also cliff's delta
 library(effsize) # add this — contains cliff.delta()
 library(showtext)
 library(DHARMa)
+library(tidyr) # for drop_na
 
 # fonts
 font_add_google("EB Garamond", "eb_garamond") # load font "EB Garamond" and save as "eb_garamond"
@@ -42,7 +43,8 @@ Reading in data:
 #| label: reading in data
 #| message: false
 kelp <- read_csv(here("data", "kelp.csv")) # store the data and save object as "kelp" 
-my_data <- read_csv(here("data", "official_personal_data.csv")) # Read in the personal data as an object named "my_data"
+my_data <- read_csv(here("data", "official_personal_data.csv")) # read in the personal data as an object named "my_data"
+mopl <- read_csv(here("data", "mopl.csv")) # read in mopl data 
 ```
 
 # Problem 1. Research writing
@@ -127,10 +129,68 @@ Isla Vista has the most variable mean kelp fronds per year, as shown by large pe
 Carpinteria has the least variable mean kelp fronds per year, as shown by a consistently low and relatively flat line across the study period. The fronds stay between 0 and 15, with no large peaks and valleys in comparison to the other sites.   
 
 # Problem 3. Data analysis
+```{r}
+#| label: cleaning
+#| message: false
+#| warning: false
+# #| include: false
+mopl_clean <- mopl |>
+  clean_names() |>
+    filter(edgedist >= 0) |>  # NOW edgedist exists
+  mutate(used_bin = case_when(
+    id == "used" ~ 1,
+    id == "available" ~ 0    # "available" not "unused"
+  )) |>
+  select(used_bin, edgedist, vo_nest) # keep only needed columns
+# to double check the structure of the data frame
+str(mopl_clean) 
+ # to display 10 random rows from the data frame
+slice_sample(
+  mopl_clean,
+  n = 10
+)
+```
+
+
+```{r}
+#| label: visualizing-data
+#| message: false
+#| warning: false
+# #| include: false
+
+# relationship between visual obstruction and nest site use
+ggplot(data = mopl_clean,
+       aes(x = vo_nest,
+           y = used_bin)) +
+  geom_point(alpha = 0.5,
+             color = "forestgreen") +
+  labs(x = "Visual Obstruction at Nest (cm)",
+       y = "Nest Site Use (1 = used, 0 = unused)",
+       title = "As visual obstruction increases, nest site use decreases")
+
+# relationship between distance to colony edge and nest site use
+ggplot(data = mopl_clean,
+       aes(x = edgedist,
+           y = used_bin)) +
+  geom_point(alpha = 0.5,
+             color = "steelblue") +
+  labs(x = "Distance to Colony Edge (m)",
+       y = "Nest Site Use (1 = used, 0 = unused)",
+       title = "Relationship between distance to colony edge and nest site use")
+```
 
 ## a. Response variable
+The response variable, nest site use vs non-use is a binary variable. 1 indicates a plover nest was found and monitored there, while 0 indicates an unused site where no plovers were detected and no nests were observed which allows for the anaysis of habitat characteristics. 
 
 ## b. Purpose of study
+*Visual Obstruction:* The visual obstruction at the nest(vo_nest) is a numeric continuous variable, measuring both vegetation height and density as a numeric range of values including fractional units. As visual obstruction increases, the probability of Mountain Plover nest site use would decrease because Mountain Plovers prefer open, bare-ground habitats with little vegetation to detect predators (discussion paragraph 4). 
+
+*Distance to prairie dog colony edge* Distance to prairie dog colony edge (edgedist) is a continuous variable, as distance can also take on any value in a range including fractional units. As distance to the prairie dog colony edge increases, the probability of Mountain Plover nest site use would decrease because 
+
+
+
+“Mountain Plovers are especially dependent on black-tailed prairie dogs (Cynomys ludovicianus) to engineer suitable habitat through soil disturbance and vegetation clipping (Dinsmore et al. 2005, Augustine and Derner 2012, Duchardt et al. 2018),” (Introduction, paragraph 3) and would therefore prefer being closer to praire dog colonies.
+
 
 ## c. Table of models
 
