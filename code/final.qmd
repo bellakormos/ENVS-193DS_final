@@ -153,20 +153,29 @@ mopl_clean <- mopl |>
     id == "available" ~ 0    # "available" not "unused"
   )) |>
   select(used_bin, edgedist, vo_nest) # keep only needed columns
+```
+
+```{r}
+#| label: hidden exploration
+#| message: false
+#| warning: false
+#| include: false
+
 # to double check the structure of the data frame
 str(mopl_clean) 
+
  # to display 10 random rows from the data frame
 slice_sample(
   mopl_clean,
-  n = 10
-)
+  n = 10)
 ```
+
 
 ```{r}
 #| label: visualizing-data
 #| message: false
 #| warning: false
-# #| include: false
+#| include: false
 
 # relationship between visual obstruction and nest site use
 ggplot(data = mopl_clean,
@@ -340,7 +349,7 @@ The appropriate analysis for my personal data is the Mann-Whitney U test.It is a
 
 ### Check all assumptions
 
-**Check 1: Random Sample** Each data point represents an independently recorded study session, and sessions were not deliberately selected to favor a location, so this assumption is met.
+**Check 1: Random Sample** Each data point represents an independently recorded study session, and sessions were not deliberately selected to favor a location. Location selection was haphazard, so this assumption is met.
 
 **Check 2: Visual**
 
@@ -433,12 +442,13 @@ ggplot(data = my_clean_data,
   geom_jitter(width = 0.2, # horizontal spread
               height = 0, # no vertical jitter
               shape = 21) + # open circle points
+  scale_y_continuous(breaks = seq(0, 14, by = 2)) + # add line breaks 
   scale_fill_manual(values = c(
     "Café" = "#FEBC11", # gold for café
     "Library" = "#4169E1")) + # blue for library
   # add labels for axes and title plot
   labs(x = "Study Location",
-       y = "Tasks Completed (n)") +  
+       y = "Tasks Completed") +  
   # edit theme, and add grid lines
   theme_minimal() + 
   theme(legend.position = "none", # remove legend
