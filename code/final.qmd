@@ -257,7 +257,7 @@ plot(
   simulateResiduals(mopl_model3) # display the DHARMa diagnostic plots for model 3
 )
 ```
-The simulated residuals follow a uniform distribution, as shown visually by the points closely following the red theoretical line in the QQ plot. Additionally, the residuals vs model rank transformed predictions plot shows no obvious patterns, suggesting that all the model assumptions are met. 
+The simulated residuals follow a uniform distribution, as shown visually by the points closely following the red theoretical line in the QQ plot. Additionally, the residuals vs model rank transformed predictions plot shows no obvious patterns, suggesting that all the model assumptions are met. This is the expected distribution for a well-fitting logistic regression model, unlike linear regression, where residuals should follow a normal distribution, logistic regression requires residuals to be uniformly distributed. 
 
 ## g. Visualize the model predictions
 ```{r}
