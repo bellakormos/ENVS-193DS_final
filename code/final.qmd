@@ -55,7 +55,7 @@ mopl <- read_csv(here("data", "mopl.csv")) # read in mopl data
 
 ## a. Transparent statistical methods
 
-In part 1, they used a simple linear regression, as they are testing whether precipitation (a continuous predictor variable predicts the flooded wetland area (a continuous response variable). In part 2, they used a Kruskal-Wallis test, as they are comparing median flooded wetland area across more than two groups (five water year classifications), and the use of the word "median" indicates a non-parametric test was appropriate and applied.
+In part 1, they used a simple linear regression, as they are testing whether precipitation (a continuous predictor variable) predicts the flooded wetland area (a continuous response variable). In part 2, they used a Kruskal-Wallis test, as they are comparing median flooded wetland area across more than two groups (five water year classifications), and the use of the word "median" indicates a non-parametric test was appropriate and applied.
 
 ## b. Figure needed
 
@@ -234,7 +234,7 @@ mopl_model3 <- glm(data = mopl_clean, # create a glm model using clean mopl data
 
 ## e. Select the best model
 ```{r}
-model.sel(mopl_model0, mopl_model1, mopl_model2, mopl_model3, rank = AIC) # select the best fitting model based on Akaike's Information Criterion (AIC)
+AIC(mopl_model0, mopl_model1, mopl_model2, mopl_model3) # select the best fitting model based on Akaike's Information Criterion (AIC)
 ```
 
 The best model as determined by Akaike’s Information Criterion (AIC) is the model using only visual obstruction as a predictor of nest site use (AIC = 322.2), as it has the lowest AIC value of the four candidate models.
@@ -306,7 +306,7 @@ ggpredict(mopl_model3, # use best model 3
 
 ```
 ## j. Interpret your results
-The predicted probability of Mountain Plover nest site occupancy at 0 on the index of visual obstruction is 73% (95% CI: 0.65, 0.80). Overall, the selected model shows a negative relationship between visual obstruction and probability of occupancy. As figure 1 shows, as visual obstruction increases, there is also a lower probability of plover nest sites being used with a sharp decrease around 5 cm and higher of obstruction. Biologically, reduced vegetation height and increased exposure of bare ground enhances the Mountain Plover habitat quality. Additionally, sparse vegetation in the range of 3–5 cm also creates ideal plover habitat because the layer of vegetation conceals their body while still allowing them to scan for and detect approaching predators, (Discussion, paragraph 4). 
+The predicted probability of Mountain Plover nest site occupancy at 0 on the index of visual obstruction is 74% (95% CI: 0.65, 0.80). Overall, the selected model shows a negative relationship between visual obstruction and probability of occupancy. As figure 1 shows, as visual obstruction increases, there is also a lower probability of plover nest sites being used with a sharp decrease around 5 cm and higher of obstruction. Biologically, reduced vegetation height and increased exposure of bare ground enhances the Mountain Plover habitat quality. Additionally, sparse vegetation in the range of 3–5 cm also creates ideal plover habitat because the layer of vegetation conceals their body while still allowing them to scan for and detect approaching predators, (Discussion, paragraph 4). 
 
 # Problem 4. Affective and exploratory visualizations
 
