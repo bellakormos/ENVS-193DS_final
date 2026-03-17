@@ -55,11 +55,11 @@ mopl <- read_csv(here("data", "mopl.csv")) # read in mopl data
 
 ## a. Transparent statistical methods
 
-In part 1, they used a simple linear regression, as they are testing whether precipitation (a continuous predictor variable) predicts the flooded wetland area (a continuous response variable). In part 2, they used a Kruskal-Wallis test, as they are comparing median flooded wetland area across more than two groups (five water year classifications), and the use of the word "median" indicates a non-parametric test was appropriate and applied.
+In part 1, they used a simple linear regression, as they are testing whether precipitation (a continuous predictor variable) predicts the flooded wetland area (a continuous response variable). In part 2, they used a Kruskal-Wallis test, as they are comparing median flooded wetland area across more than two groups (five water year classifications: wet, above normal, below normal, dry, critical drought), and the use of the word "median" indicates a non-parametric test was appropriate and applied.
 
 ## b. Figure needed
 
-A figure that can could accompany the statement is a by a side-by-side boxplot of wetland flooding area across the five water year classifications. The water year classification (wet, above normal, below normal, dry, and critical drought) should be on the x-axis, and flooded wetland area (m²) should be on the y-axis. Each group can be represented by a vertical boxplot with the middle line being the median. the range of the plot spaninng the 1st and 3rd quartiles (IQR range), and the whiskers extending to 1.5 × IQR. The Kruskal-Wallis test compares medians and is therefore the most important visual component to assess and compare the central tendencies. The raw data points should also be jittered behind the boxplots so that the reader can see the actual data observations and assess the spread and sample size of each group.
+A figure that can could accompany the statement is a by a side-by-side boxplot of wetland flooding area across the five water year classifications. The water year classification (wet, above normal, below normal, dry, and critical drought) should be on the x-axis, and flooded wetland area (m²) should be on the y-axis. Each group can be represented by a vertical boxplot with the middle line being the median. The range of the plot spans the 1st and 3rd quartiles (IQR range), and the whiskers extend to 1.5 × IQR. The Kruskal-Wallis test compares medians and is therefore the most important visual component to assess and compare the central tendencies. The raw data points should also be jittered behind the boxplots so that the reader can see the actual data observations and assess the spread and sample size of each group.
 
 ## c. Suggestions for rewriting
 
@@ -95,12 +95,15 @@ kelp_clean <- kelp %>%
                                  "Naples", "Isla Vista", "Carpinteria")) %>% 
   group_by(site_name, year) %>% # group for summarizing
   summarize(mean_fronds = mean(fronds)) %>% # calculate mean fronds per group
-  ungroup() # remove grouping structure
+  ungroup()  # remove grouping structure
+
+slice_sample(kelp_clean, n = 5) # display 5 random rows 
+str(kelp_clean) # display structure 
 ```
 
 ## b. Understanding the data
 
-We want to exclude frond observations from the date 2000-09-22 in transect 6 in quad 40 because they are marked to have "-99999" fronds, which does not make biological sense, and therefore represents missing data. It is also outlined in the methods and protocols section that either this data was either not collected or was lost.
+We want to exclude frond observations from the date 2000-09-22 in transect 6 in quad 40 because they are marked to have "-99999" fronds. This does not make biological sense, represents missing data, and therefore must be filtered out or may skew calculations. It is also outlined in the methods and protocols section that either this data was either not collected or was lost.
 
 ## c. Visualize the data
 
@@ -108,6 +111,8 @@ We want to exclude frond observations from the date 2000-09-22 in transect 6 in 
 #| label: visualization
 #| message: false
 #| warning: false
+#| fig-height: 6
+#| fig-width: 8
 # base layer: ggplot using cleaned kelp data-set
 ggplot(data = kelp_clean,
        aes(x = year, # set predictor variable
@@ -142,102 +147,52 @@ Carpinteria has the least variable mean kelp fronds per year, as shown by a cons
 
 ## a. Response variable
 
-The response variable, nest site use vs non-use is a binary variable. 1 indicates a plover nest was found and monitored there, while 0 indicates an unused site where no plovers were detected and no nests were observed which allows for the anaysis of habitat characteristics.
+The response variable, nest site use vs non-use is a binary variable. 1 indicates a plover nest was actively used by a Mountain plover, while 0 indicates an unused site where no plovers were detected and no nests were observed which allows for the analysis of habitat characteristics.
 
 ## b. Purpose of study
 
 *Visual Obstruction:* The visual obstruction at the nest(vo_nest) is a numeric continuous variable, measuring both vegetation height and density as a numeric range of values including fractional units. As visual obstruction increases, the probability of Mountain Plover nest site use would decrease because Mountain Plovers prefer open, bare-ground habitats with little vegetation to detect predators (discussion paragraph 4).
 
-*Distance to prairie dog colony edge* Distance to prairie dog colony edge (edgedist) is a continuous variable, as distance can also take on any value in a range including fractional units. As distance to the prairie dog colony edge increases, the probability of Mountain Plover nest site use would decrease because they engineer suitable plover habitat through, "soil disturbance and vegetation clipping," (Dinsmore et al. 2005, Augustine and Derner 2012, Duchardt et al. 2018)(Introduction, pararaph 3).
+*Distance to prairie dog colony edge* Distance to prairie dog colony edge (edgedist) is a continuous variable, as distance can also take on any value in a range including fractional units. Edgedist is measured by determining the distance from a given point to the nearest edge of the prairie dog colony. As distance to the prairie dog colony edge increases, the probability of Mountain Plover nest site use would decrease because they engineer suitable plover habitat through soil disturbance and vegetation clipping(introduction, paragraph 3). Colony edges have complementary resources and promote predator cover (discussion, paragraph 2). 
 
 ## c. Table of models
 
-| Model Number | Visual obstruction | Distance to prairie dog colony   |
-|--------------|--------------------|----------------------------------|
-| 0            | X                  | X                                |
-| 1            | ✔                  | ✔                                |
-| 2            | X.                 | ✔                                |
-| 3            | ✔                  | X                                |
+| Model Number | Visual obstruction | Distance to prairie dog colony | Model description           |
+|--------------|--------------------|--------------------------------|-----------------------------|
+| 0            | X                  | X                              | No predictors (null model)  |
+| 1            | ✔                  | ✔                              | All predictors (full model) |
+| 2            | X.                 | ✔                              | Visual obstruction only     |
+| 3            | ✔                  | X                              | Distance to colony edge only|
 
 ## d. Run the models
 
-
 ```{r}
-#| label: cleaning
+#| label: clean data and run models
 #| message: false
 #| warning: false
 
 mopl_clean <- mopl |> # set mopl to cleaned data object
   clean_names() |> # lowercase and underscore
-    filter(edgedist >= 0) |>  # remove rows with negative edge distances (data entry errors)
-  mutate(used_bin = case_when(
+     mutate(used_bin = case_when(
     id == "used" ~ 1, # assign 1 to used nest sites
     id == "available" ~ 0 # assign 0 to available but unused sites
   )) |>
-  select(used_bin, edgedist, vo_nest) # keep only needed columns
-```
-
-```{r}
-#| label: hidden exploration
-#| message: false
-#| warning: false
-#| include: false
-
-# to double check the structure of the data frame
-str(mopl_clean) 
-
- # to display 10 random rows from the data frame
-slice_sample(
-  mopl_clean,
-  n = 10)
-```
-
-```{r}
-#| label: visualizing-data
-#| message: false
-#| warning: false
-#| include: false
-
-# relationship between visual obstruction and nest site use
-ggplot(data = mopl_clean,
-       aes(x = vo_nest,
-           y = used_bin)) +
-  geom_point(alpha = 0.5,
-             color = "forestgreen") +
-  labs(x = "Visual Obstruction at Nest (cm)",
-       y = "Nest Site Use (1 = used, 0 = unused)",
-       title = "As visual obstruction increases, nest site use decreases")
-
-# relationship between distance to colony edge and nest site use
-ggplot(data = mopl_clean,
-       aes(x = edgedist,
-           y = used_bin)) +
-  geom_point(alpha = 0.5,
-             color = "steelblue") +
-  labs(x = "Distance to Colony Edge (m)",
-       y = "Nest Site Use (1 = used, 0 = unused)",
-       title = "Relationship between distance to colony edge and nest site use")
-```
-
-```{r}
-#| label: run models
-#| message: false
-#| warning: false
-
-mopl_model0 <- glm(data = mopl_clean, # create a null glm model using cleaned mopl dataset
-                   used_bin ~ 1, # response
-                   family = "binomial") # use logistic regression glm
-
-mopl_model1 <- glm(data = mopl_clean,  # saturated glm model
-                   used_bin ~ edgedist + vo_nest, # response vs. edge distance and visual obstruction
+  # keep only needed columns
+  select(used_bin, edgedist, vo_nest)
+mopl_model0 <- glm( used_bin ~ 1, # response
+                    data = mopl_clean, # create a null glm model using cleaned mopl dataset
+                    family = "binomial") # use logistic regression glm
+                   
+mopl_model1 <- glm(used_bin ~ edgedist + vo_nest, # response vs. edge distance and visual obstruction
+                   data = mopl_clean,  # saturated glm model
                    family = "binomial") # use logistic regression type glm
 
-mopl_model2 <- glm(data = mopl_clean, # create a glm model using clean mopl data
-                   used_bin ~ edgedist, # response vs. edge distance
+mopl_model2 <- glm(used_bin ~ edgedist, # response vs. edge distance
+                   data = mopl_clean, # create a glm model using clean mopl data
                    family = "binomial") # use logistic regression type glm
 
-mopl_model3 <- glm(data = mopl_clean, # create a glm model using clean mopl data
-                   used_bin ~ vo_nest, # response vs. visual obstruction
+mopl_model3 <- glm(used_bin ~ vo_nest, # response vs. visual obstruction
+                   data = mopl_clean, # create a glm model using clean mopl data
                    family = "binomial") # use logistic regression type glm
 ```
 
@@ -245,8 +200,7 @@ mopl_model3 <- glm(data = mopl_clean, # create a glm model using clean mopl data
 ```{r}
 AIC(mopl_model0, mopl_model1, mopl_model2, mopl_model3) # select the best fitting model based on Akaike's Information Criterion (AIC)
 ```
-
-The best model as determined by Akaike’s Information Criterion (AIC) is the model using only visual obstruction as a predictor of nest site use (AIC = 322.2), as it has the lowest AIC value of the four candidate models.
+The best model as determined by Akaike’s Information Criterion (AIC) is the model using only visual obstruction as a predictor of nest site use (AIC = 331.77), as it has the lowest AIC value of the four candidate models.
 
 ## f. Check the diagnostics
 ```{r}
@@ -257,7 +211,7 @@ plot(
   simulateResiduals(mopl_model3) # display the DHARMa diagnostic plots for model 3
 )
 ```
-The simulated residuals follow a uniform distribution, as shown visually by the points closely following the red theoretical line in the QQ plot. Additionally, the residuals vs model rank transformed predictions plot shows no obvious patterns, suggesting that all the model assumptions are met. This is the expected distribution for a well-fitting logistic regression model, unlike linear regression, where residuals should follow a normal distribution, logistic regression requires residuals to be uniformly distributed. 
+The simulated residuals follow a uniform distribution, as shown visually by the points closely following the red theoretical line in the QQ plot. Additionally, the residuals vs model rank transformed predictions plot shows no obvious patterns, suggesting that all the model assumptions are met. This is the expected distribution for a  logistic regression model, unlike linear regression, where residuals should follow a normal distribution.
 
 ## g. Visualize the model predictions
 ```{r}
@@ -267,7 +221,7 @@ The simulated residuals follow a uniform distribution, as shown visually by the 
 
 # generate predicted probabilities from the best model 3
 mopl_preds <- ggpredict(mopl_model3, # generate predicted probabilities 
-                        terms = "vo_nest [0:19 by = 1]") # predict across range of visual obstruction values
+                        terms = "vo_nest [all]") # predict across range of visual obstruction values
 # base layer: ggplot using cleaned mopl dataset
 ggplot(mopl_clean, 
        aes(x = vo_nest, # set x-axis to visual obstruction
@@ -315,7 +269,7 @@ ggpredict(mopl_model3, # use best model 3
 
 ```
 ## j. Interpret your results
-The predicted probability of Mountain Plover nest site occupancy at 0 on the index of visual obstruction is 74% (95% CI: 0.65, 0.80). Overall, the selected model shows a negative relationship between visual obstruction and probability of occupancy. As figure 1 shows, as visual obstruction increases, there is also a lower probability of plover nest sites being used with a sharp decrease around 5 cm and higher of obstruction. Biologically, reduced vegetation height and increased exposure of bare ground enhances the Mountain Plover habitat quality. Additionally, sparse vegetation in the range of 3–5 cm also creates ideal plover habitat because the layer of vegetation conceals their body while still allowing them to scan for and detect approaching predators, (Discussion, paragraph 4). 
+The predicted probability of Mountain Plover nest site occupancy at 0 on the index of visual obstruction is 73% (95% CI: 0.65, 0.80). Overall, the selected model shows a negative relationship between visual obstruction and probability of occupancy. As figure 1 shows, as visual obstruction increases, there is also a lower probability of plover nest sites being used with a sharp decrease around 5 cm and higher of obstruction. Biologically, reduced vegetation height and increased exposure of bare ground enhances the Mountain Plover habitat quality. Additionally, sparse vegetation in the range of 3–5 cm also creates ideal plover habitat because the layer of vegetation conceals their body while still allowing them to scan for and detect approaching predators, (Discussion, paragraph 4). 
 
 # Problem 4. Affective and exploratory visualizations
 
