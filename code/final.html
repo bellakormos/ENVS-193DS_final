@@ -248,11 +248,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code># A tibble: 5 × 3
   site_name    year mean_fronds
   &lt;fct&gt;       &lt;dbl&gt;       &lt;dbl&gt;
-1 Isla Vista   2023        3.78
-2 Carpinteria  2025       12.9 
-3 Carpinteria  2021        6.13
-4 Carpinteria  2008        6.03
-5 Carpinteria  2001        4.42</code></pre>
+1 Naples       2001      0.0606
+2 Isla Vista   2009     30.2   
+3 Carpinteria  2023      4.50  
+4 Naples       2025      8.44  
+5 Naples       2021     10.5   </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(kelp_clean) <span class="co"># display structure </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -349,15 +349,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="odd">
 <td>2</td>
-<td>X.</td>
+<td>X</td>
 <td>✔</td>
-<td>Visual obstruction only.</td>
+<td>Distance to colony edge only</td>
 </tr>
 <tr class="even">
 <td>3</td>
 <td>✔</td>
 <td>X</td>
-<td>Distance to colony edge only</td>
+<td>Visual obstruction only</td>
 </tr>
 </tbody>
 </table>
@@ -367,51 +367,49 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mopl_clean <span class="ot">&lt;-</span> mopl <span class="sc">|&gt;</span> <span class="co"># set mopl to cleaned data object</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="sc">|&gt;</span> <span class="co"># lowercase and underscore</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(edgedist <span class="sc">&gt;=</span> <span class="dv">0</span>) <span class="sc">|&gt;</span>  <span class="co"># remove rows with negative edge distances (data entry errors)</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">used_bin =</span> <span class="fu">case_when</span>(</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    id <span class="sc">==</span> <span class="st">"used"</span> <span class="sc">~</span> <span class="dv">1</span>, <span class="co"># assign 1 to used nest sites</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    id <span class="sc">==</span> <span class="st">"available"</span> <span class="sc">~</span> <span class="dv">0</span> <span class="co"># assign 0 to available but unused sites</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">|&gt;</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(used_bin, edgedist, vo_nest) <span class="co"># keep only needed columns</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>mopl_model0 <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="at">data =</span> mopl_clean, <span class="co"># create a null glm model using cleaned mopl dataset</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                   used_bin <span class="sc">~</span> <span class="dv">1</span>, <span class="co"># response</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">family =</span> <span class="st">"binomial"</span>) <span class="co"># use logistic regression glm</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>mopl_model1 <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="at">data =</span> mopl_clean,  <span class="co"># saturated glm model</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>                   used_bin <span class="sc">~</span> edgedist <span class="sc">+</span> vo_nest, <span class="co"># response vs. edge distance and visual obstruction</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>                   <span class="at">family =</span> <span class="st">"binomial"</span>) <span class="co"># use logistic regression type glm</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>mopl_model2 <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="at">data =</span> mopl_clean, <span class="co"># create a glm model using clean mopl data</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>                   used_bin <span class="sc">~</span> edgedist, <span class="co"># response vs. edge distance</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>                   <span class="at">family =</span> <span class="st">"binomial"</span>) <span class="co"># use logistic regression type glm</span></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>mopl_model3 <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="at">data =</span> mopl_clean, <span class="co"># create a glm model using clean mopl data</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>                   used_bin <span class="sc">~</span> vo_nest, <span class="co"># response vs. visual obstruction</span></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>                   <span class="at">family =</span> <span class="st">"binomial"</span>) <span class="co"># use logistic regression type glm</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>     <span class="fu">mutate</span>(<span class="at">used_bin =</span> <span class="fu">case_when</span>(</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    id <span class="sc">==</span> <span class="st">"used"</span> <span class="sc">~</span> <span class="dv">1</span>, <span class="co"># assign 1 to used nest sites</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    id <span class="sc">==</span> <span class="st">"available"</span> <span class="sc">~</span> <span class="dv">0</span> <span class="co"># assign 0 to available but unused sites</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">|&gt;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># keep only needed columns</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(used_bin, edgedist, vo_nest)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>mopl_model0 <span class="ot">&lt;-</span> <span class="fu">glm</span>( used_bin <span class="sc">~</span> <span class="dv">1</span>, <span class="co"># response</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> mopl_clean, <span class="co"># create a null glm model using cleaned mopl dataset</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>                    <span class="at">family =</span> <span class="st">"binomial"</span>) <span class="co"># use logistic regression glm</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>                   </span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>mopl_model1 <span class="ot">&lt;-</span> <span class="fu">glm</span>(used_bin <span class="sc">~</span> edgedist <span class="sc">+</span> vo_nest, <span class="co"># response vs. edge distance and visual obstruction</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> mopl_clean,  <span class="co"># saturated glm model</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>                   <span class="at">family =</span> <span class="st">"binomial"</span>) <span class="co"># use logistic regression type glm</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>mopl_model2 <span class="ot">&lt;-</span> <span class="fu">glm</span>(used_bin <span class="sc">~</span> edgedist, <span class="co"># response vs. edge distance</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> mopl_clean, <span class="co"># create a glm model using clean mopl data</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>                   <span class="at">family =</span> <span class="st">"binomial"</span>) <span class="co"># use logistic regression type glm</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>mopl_model3 <span class="ot">&lt;-</span> <span class="fu">glm</span>(used_bin <span class="sc">~</span> vo_nest, <span class="co"># response vs. visual obstruction</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> mopl_clean, <span class="co"># create a glm model using clean mopl data</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>                   <span class="at">family =</span> <span class="st">"binomial"</span>) <span class="co"># use logistic regression type glm</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="e.-select-the-best-model" class="level2">
 <h2 class="anchored" data-anchor-id="e.-select-the-best-model">e. Select the best model</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">AIC</span>(mopl_model0, mopl_model1, mopl_model2, mopl_model3) <span class="co"># select the best fitting model based on Akaike's Information Criterion (AIC)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">AIC</span>(mopl_model0, mopl_model1, mopl_model2, mopl_model3) <span class="co"># select the best fitting model based on Akaike's Information Criterion (AIC)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            df      AIC
-mopl_model0  1 368.9113
-mopl_model1  3 322.9072
-mopl_model2  2 366.6083
-mopl_model3  2 322.2170</code></pre>
+mopl_model0  1 384.6172
+mopl_model1  3 333.7410
+mopl_model2  2 386.0911
+mopl_model3  2 331.7690</code></pre>
 </div>
 </div>
-<p>The best model as determined by Akaike’s Information Criterion (AIC) is the model using only visual obstruction as a predictor of nest site use (AIC = 322.2), as it has the lowest AIC value of the four candidate models.</p>
+<p>The best model as determined by Akaike’s Information Criterion (AIC) is the model using only visual obstruction as a predictor of nest site use (AIC = 331.77), as it has the lowest AIC value of the four candidate models.</p>
 </section>
 <section id="f.-check-the-diagnostics" class="level2">
 <h2 class="anchored" data-anchor-id="f.-check-the-diagnostics">f.&nbsp;Check the diagnostics</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">simulateResiduals</span>(mopl_model3) <span class="co"># display the DHARMa diagnostic plots for model 3</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">simulateResiduals</span>(mopl_model3) <span class="co"># display the DHARMa diagnostic plots for model 3</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -420,44 +418,45 @@ mopl_model3  2 322.2170</code></pre>
 </div>
 </div>
 </div>
-<p>The simulated residuals follow a uniform distribution, as shown visually by the points closely following the red theoretical line in the QQ plot. Additionally, the residuals vs model rank transformed predictions plot shows no obvious patterns, suggesting that all the model assumptions are met. This is the expected distribution for a well-fitting logistic regression model, unlike linear regression, where residuals should follow a normal distribution, logistic regression requires residuals to be uniformly distributed.</p>
+<p>The simulated residuals follow a uniform distribution, as shown visually by the points closely following the red theoretical line in the QQ plot. Additionally, the residuals vs model rank transformed predictions plot shows no obvious patterns, suggesting that all the model assumptions are met. This is the expected distribution for a logistic regression model, unlike linear regression, where residuals should follow a normal distribution.</p>
 </section>
 <section id="g.-visualize-the-model-predictions" class="level2">
 <h2 class="anchored" data-anchor-id="g.-visualize-the-model-predictions">g. Visualize the model predictions</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># generate predicted probabilities from the best model 3</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>mopl_preds <span class="ot">&lt;-</span> <span class="fu">ggpredict</span>(mopl_model3, <span class="co"># generate predicted probabilities </span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">terms =</span> <span class="st">"vo_nest [0:19 by = 1]"</span>) <span class="co"># predict across range of visual obstruction values</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># base layer: ggplot using cleaned mopl dataset</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mopl_clean, </span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> vo_nest, <span class="co"># set x-axis to visual obstruction</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> used_bin)) <span class="sc">+</span> <span class="co"># set y-axis to binary nest site use</span></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># first layer: add point observations, edit size, color, and add transparency</span></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>,</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="st">"#7B5EA7"</span>,</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># second layer: add 95% CI around model predictions</span></span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="at">data =</span> mopl_preds,</span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>              <span class="fu">aes</span>(<span class="at">x =</span> x,</span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>                  <span class="at">y =</span> predicted,</span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>                  <span class="at">ymin =</span> conf.low,</span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>                  <span class="at">ymax =</span> conf.high),</span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>              <span class="at">alpha =</span> <span class="fl">0.3</span>, <span class="co"># change the transparency of the ribbon</span></span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>              <span class="at">fill =</span> <span class="st">"seagreen4"</span>) <span class="sc">+</span> <span class="co"># change the color of the ribbon</span></span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># third layer: add a model predictions line</span></span>
-<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> mopl_preds,</span>
-<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">x =</span> x,</span>
-<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>                <span class="at">y =</span> predicted),</span>
-<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>                <span class="at">color =</span> <span class="st">"#4A3566"</span>) <span class="sc">+</span> <span class="co"># match ribbon color</span></span>
-<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>   <span class="co"># set y-axis to full probability range</span></span>
-<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>),</span>
-<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>                     <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>)) <span class="sc">+</span></span>
-<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># add axes labels </span></span>
-<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Visual obstruction (cm)"</span>,</span>
-<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Probability of nest site occupancy (1 = Yes, 0 = No)"</span>) <span class="sc">+</span></span>
-<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>  <span class="co"># change to light theme, change custom font </span></span>
-<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>(<span class="at">base_family =</span> <span class="st">"eb_garamond"</span>) <span class="sc">+</span></span>
-<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>()) <span class="co"># remove gridlines</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># generate predicted probabilities from the best model 3</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>mopl_preds <span class="ot">&lt;-</span> <span class="fu">ggpredict</span>(mopl_model3, <span class="co"># generate predicted probabilities </span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">terms =</span> <span class="st">"vo_nest [all]"</span>) <span class="co"># predict across range of visual obstruction values</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># base layer: ggplot using cleaned mopl dataset</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mopl_clean, </span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> vo_nest, <span class="co"># set x-axis to visual obstruction</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> used_bin)) <span class="sc">+</span> <span class="co"># set y-axis to binary nest site use</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># first layer: add point observations, edit size, color, and add transparency</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>,</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="st">"#7B5EA7"</span>,</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># second layer: add 95% CI around model predictions</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="at">data =</span> mopl_preds,</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>              <span class="fu">aes</span>(<span class="at">x =</span> x,</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>                  <span class="at">y =</span> predicted,</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>                  <span class="at">ymin =</span> conf.low,</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>                  <span class="at">ymax =</span> conf.high),</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>              <span class="at">alpha =</span> <span class="fl">0.3</span>, <span class="co"># change the transparency of the ribbon</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>              <span class="at">fill =</span> <span class="st">"seagreen4"</span>) <span class="sc">+</span> <span class="co"># change the color of the ribbon</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># third layer: add a model predictions line</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> mopl_preds,</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">x =</span> x,</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>                <span class="at">y =</span> predicted),</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>                <span class="at">color =</span> <span class="st">"#4A3566"</span>) <span class="sc">+</span> <span class="co"># match ribbon color</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>   <span class="co"># set y-axis to full probability range</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>),</span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>                     <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># add axes labels </span></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Visual obstruction (cm)"</span>,</span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Probability of nest site occupancy (1 = Yes, 0 = No)"</span>) <span class="sc">+</span></span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>  <span class="co"># change to light theme, change custom font </span></span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>(<span class="at">base_family =</span> <span class="st">"eb_garamond"</span>) <span class="sc">+</span></span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(), <span class="co"># remove gridlines</span></span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.background =</span> <span class="fu">element_blank</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -469,26 +468,26 @@ mopl_model3  2 322.2170</code></pre>
 </section>
 <section id="h.-write-a-caption-for-your-figure." class="level2">
 <h2 class="anchored" data-anchor-id="h.-write-a-caption-for-your-figure.">h. Write a caption for your figure.</h2>
-<p><strong>Figure 1. Mountain Plovers show higher probability of nest site occupancy at lower levels of visual obstruction.</strong> The x-axis represents visual obstruction at the nest site in cm, and the y-axis represents the predicted probability of nest site occupancy (0 = unused, 1 = used). Each point represents an individual nest site observation. The black/dark purple line represents the model-predicted probability of nest site occupancy across the range of visual obstruction values. The green ribbon represents the 95% confidence interval around the model predictions. Data citation: Duchardt, Courtney; Beck, Jeffrey; Augustine, David (2020). Data from: Mountain Plover habitat selection and nest survival in relation to weather variability and spatial attributes of Black-tailed Prairie Dog disturbance [Dataset]. Dryad. https://doi.org/10.5061/dryad.ttdz08kt7.</p>
+<p><strong>Figure 1. Mountain Plovers show higher probability of nest site occupancy at lower levels of visual obstruction.</strong> The x-axis represents visual obstruction at the nest site in cm, and the y-axis represents the predicted probability of nest site occupancy (0 = unused, 1 = used). Each point represents an individual nest site observation. The dark purple line represents the model-predicted probability of nest site occupancy across the range of visual obstruction values. The green ribbon represents the 95% confidence interval around the model predictions. Data citation: Duchardt, Courtney; Beck, Jeffrey; Augustine, David (2020). Data from: Mountain Plover habitat selection and nest survival in relation to weather variability and spatial attributes of Black-tailed Prairie Dog disturbance [Dataset]. Dryad. https://doi.org/10.5061/dryad.ttdz08kt7.</p>
 </section>
 <section id="i.-calculate-model-predictions" class="level2">
 <h2 class="anchored" data-anchor-id="i.-calculate-model-predictions">i. Calculate model predictions</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate the predicted probability of nest-site occupancy</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggpredict</span>(mopl_model3, <span class="co"># use best model 3</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">terms =</span> <span class="st">"vo_nest [0]"</span>) <span class="co"># visual obstruction = 0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate the predicted probability of nest-site occupancy</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggpredict</span>(mopl_model3, <span class="co"># use best model 3</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">terms =</span> <span class="st">"vo_nest [0]"</span>) <span class="co"># visual obstruction = 0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Predicted probabilities of used_bin
 
 vo_nest | Predicted |     95% CI
 --------------------------------
-      0 |      0.74 | 0.65, 0.81</code></pre>
+      0 |      0.73 | 0.65, 0.80</code></pre>
 </div>
 </div>
 </section>
 <section id="j.-interpret-your-results" class="level2">
 <h2 class="anchored" data-anchor-id="j.-interpret-your-results">j. Interpret your results</h2>
-<p>The predicted probability of Mountain Plover nest site occupancy at 0 on the index of visual obstruction is 74% (95% CI: 0.65, 0.80). Overall, the selected model shows a negative relationship between visual obstruction and probability of occupancy. As figure 1 shows, as visual obstruction increases, there is also a lower probability of plover nest sites being used with a sharp decrease around 5 cm and higher of obstruction. Biologically, reduced vegetation height and increased exposure of bare ground enhances the Mountain Plover habitat quality. Additionally, sparse vegetation in the range of 3–5 cm also creates ideal plover habitat because the layer of vegetation conceals their body while still allowing them to scan for and detect approaching predators, (Discussion, paragraph 4).</p>
+<p>The predicted probability of Mountain Plover nest site occupancy at 0 cm visual obstruction is 73% (95% CI: 0.65, 0.80). Overall, the selected model shows a negative relationship between visual obstruction and probability of occupancy. As Figure 1 shows, as visual obstruction increases, there is a lower probability of plover nest sites being used with a sharp decrease around 5 cm and higher of obstruction. Biologically, reduced vegetation height and increased exposure of bare ground enhances the Mountain Plover habitat quality. Additionally, sparse vegetation in the range of 3–5 cm also creates ideal plover habitat because the layer of vegetation conceals their body while still allowing them to scan for and detect approaching predators (Discussion, paragraph 4).</p>
 </section>
 </section>
 <section id="problem-4.-affective-and-exploratory-visualizations" class="level1">
@@ -527,28 +526,28 @@ vo_nest | Predicted |     95% CI
 <p><strong>Check 1: Random Sample</strong> Each data point represents an independently recorded study session, and sessions were not deliberately selected to favor a location. Location selection was haphazard, so this assumption is met.</p>
 <p><strong>Check 2: Visual</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>my_clean_data <span class="ot">&lt;-</span> my_data <span class="sc">|&gt;</span> </span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="co"># columns names lower case with underscores</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># base layer: ggplot using cleaned data-set</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> my_clean_data,</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> tasks_completed, <span class="co"># tasks completed on x-axis</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">fill =</span> study_location)) <span class="sc">+</span> <span class="co"># fill bars by study location</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># first layer: histogram</span></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">1</span>,</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>                 <span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="co"># semi-transparent bars</span></span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span> <span class="co"># white outline between bars</span></span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>study_location) <span class="sc">+</span> <span class="co"># separate panel for each location</span></span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">12</span>, <span class="at">by =</span> <span class="dv">1</span>)) <span class="sc">+</span> <span class="co"># whole number x-axis ticks</span></span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Café"</span> <span class="ot">=</span> <span class="st">"#FEBC11"</span>, <span class="co"># gold for café</span></span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Library"</span> <span class="ot">=</span> <span class="st">"#4169E1"</span>)) <span class="sc">+</span> <span class="co">#blue for library</span></span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Label axes and plot </span></span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribution of Tasks Completed by Study Location"</span>, </span>
-<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Tasks Completed"</span>,</span>
-<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Number of Study sessions"</span>) <span class="sc">+</span></span>
-<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_linedraw</span>() <span class="sc">+</span></span>
-<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
-<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(), <span class="co"># remove minor gridlines</span></span>
-<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.line.x =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"black"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>my_clean_data <span class="ot">&lt;-</span> my_data <span class="sc">|&gt;</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="co"># columns names lower case with underscores</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># base layer: ggplot using cleaned data-set</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> my_clean_data,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> tasks_completed, <span class="co"># tasks completed on x-axis</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">fill =</span> study_location)) <span class="sc">+</span> <span class="co"># fill bars by study location</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># first layer: histogram</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">1</span>,</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>                 <span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="co"># semi-transparent bars</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span> <span class="co"># white outline between bars</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>study_location) <span class="sc">+</span> <span class="co"># separate panel for each location</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">12</span>, <span class="at">by =</span> <span class="dv">1</span>)) <span class="sc">+</span> <span class="co"># whole number x-axis ticks</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Café"</span> <span class="ot">=</span> <span class="st">"#FEBC11"</span>, <span class="co"># gold for café</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Library"</span> <span class="ot">=</span> <span class="st">"#4169E1"</span>)) <span class="sc">+</span> <span class="co">#blue for library</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Label axes and plot </span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribution of Tasks Completed by Study Location"</span>, </span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Tasks Completed"</span>,</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Number of Study sessions"</span>) <span class="sc">+</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_linedraw</span>() <span class="sc">+</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(), <span class="co"># remove minor gridlines</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.line.x =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"black"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -557,18 +556,18 @@ vo_nest | Predicted |     95% CI
 </div>
 </div>
 </div>
-<p>Both the café and library distributions are unimodal and right-skewed, indicating similar distributional shape, so all assumptions are met.”</p>
+<p>Both the café and library distributions are unimodal and right-skewed, indicating similar distributional shape, so all assumptions are met.</p>
 </section>
 <section id="wilcoxon-rank-sum-exact-test" class="level3">
 <h3 class="anchored" data-anchor-id="wilcoxon-rank-sum-exact-test">Wilcoxon rank sum exact test</h3>
 <p><strong>Summary of stats: median and n values</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>my_clean_data <span class="sc">%&gt;%</span> </span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(study_location) <span class="sc">|&gt;</span> <span class="co"># group by café vs library</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">median =</span> <span class="fu">median</span>(tasks_completed), <span class="co"># calculate median tasks completed</span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">n</span>() <span class="co"># count number of study sessions per group</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>my_clean_data <span class="sc">%&gt;%</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(study_location) <span class="sc">|&gt;</span> <span class="co"># group by café vs library</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">median =</span> <span class="fu">median</span>(tasks_completed), <span class="co"># calculate median tasks completed</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">n</span>() <span class="co"># count number of study sessions per group</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 3
   study_location median     n
@@ -579,8 +578,8 @@ vo_nest | Predicted |     95% CI
 </div>
 <p><strong>Run a Wilcoxon test</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wilcox.test</span>(tasks_completed <span class="sc">~</span> study_location, <span class="co"># compare tasks completed by study location</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> my_clean_data) <span class="co"># use cleaned personal data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wilcox.test</span>(tasks_completed <span class="sc">~</span> study_location, <span class="co"># compare tasks completed by study location</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> my_clean_data) <span class="co"># use cleaned personal data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Wilcoxon rank sum test with continuity correction
@@ -592,8 +591,8 @@ alternative hypothesis: true location shift is not equal to 0</code></pre>
 </div>
 <p><strong>Calculate effect size using Cliff’s Delta</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cliff.delta</span>(tasks_completed <span class="sc">~</span> study_location,</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> my_clean_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cliff.delta</span>(tasks_completed <span class="sc">~</span> study_location,</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> my_clean_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Cliff's Delta
@@ -604,7 +603,7 @@ delta estimate: -0.08 (negligible)
 -0.4569839  0.3213481 </code></pre>
 </div>
 </div>
-<p>I found a small (Cliff’s δ = -0.08) difference in median task completed between cafés (n = 5) and the library(n = 15). (Wilcoxon rank-sum test, W = 103.5, p = 0.72, ⍺ = 0.05). Tasks completed tended to be smaller in cafés (median = 3) than in the library(median = 5).</p>
+<p>I found a small (Cliff’s δ = -0.08) difference in median task completed between cafés (n = 15) and the library(n = 15). (Wilcoxon rank-sum test, W = 103.5, p = 0.72, ⍺ = 0.05). Tasks completed tended to be smaller in cafés (median = 3) than in the library(median = 5).</p>
 </section>
 </section>
 <section id="d.-create-a-visualization" class="level2">
@@ -612,33 +611,33 @@ delta estimate: -0.08 (negligible)
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># base layer: ggplot using cleaned data-set</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> my_clean_data,</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> study_location, <span class="co"># categorical predictor on x-axis</span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> tasks_completed)) <span class="sc">+</span> <span class="co"># response variable on y-axis</span></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># first layer: boxplot</span></span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">fill =</span> study_location), <span class="co"># fill boxplot by study location</span></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">width =</span> <span class="fl">0.5</span>,</span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>               <span class="at">outliers =</span> <span class="cn">FALSE</span>, <span class="co"># avoid outliers being shown twice</span></span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span> <span class="co"># boxplot width</span></span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># second layer: add jittered points</span></span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.2</span>, <span class="co"># horizontal spread</span></span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>              <span class="at">height =</span> <span class="dv">0</span>, <span class="co"># no vertical jitter</span></span>
-<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>              <span class="at">shape =</span> <span class="dv">21</span>) <span class="sc">+</span> <span class="co"># open circle points</span></span>
-<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">14</span>, <span class="at">by =</span> <span class="dv">2</span>)) <span class="sc">+</span> <span class="co"># add line breaks </span></span>
-<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
-<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Café"</span> <span class="ot">=</span> <span class="st">"#FEBC11"</span>, <span class="co"># gold for café</span></span>
-<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Library"</span> <span class="ot">=</span> <span class="st">"#4169E1"</span>)) <span class="sc">+</span> <span class="co"># blue for library</span></span>
-<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># add labels for axes and title plot</span></span>
-<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Study Location"</span>,</span>
-<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Tasks Completed"</span>) <span class="sc">+</span>  </span>
-<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>  <span class="co"># edit theme, and add grid lines</span></span>
-<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
-<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>, <span class="co"># remove legend</span></span>
-<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major.x =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.line.x =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"black"</span>),</span>
-<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.line.y =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"black"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># base layer: ggplot using cleaned data-set</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> my_clean_data,</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> study_location, <span class="co"># categorical predictor on x-axis</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> tasks_completed)) <span class="sc">+</span> <span class="co"># response variable on y-axis</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># first layer: boxplot</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">fill =</span> study_location), <span class="co"># fill boxplot by study location</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">width =</span> <span class="fl">0.5</span>,</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>               <span class="at">outliers =</span> <span class="cn">FALSE</span>, <span class="co"># avoid outliers being shown twice</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span> <span class="co"># boxplot width</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># second layer: add jittered points</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.2</span>, <span class="co"># horizontal spread</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>              <span class="at">height =</span> <span class="dv">0</span>, <span class="co"># no vertical jitter</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>              <span class="at">shape =</span> <span class="dv">21</span>) <span class="sc">+</span> <span class="co"># open circle points</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">14</span>, <span class="at">by =</span> <span class="dv">2</span>)) <span class="sc">+</span> <span class="co"># add line breaks </span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Café"</span> <span class="ot">=</span> <span class="st">"#FEBC11"</span>, <span class="co"># gold for café</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Library"</span> <span class="ot">=</span> <span class="st">"#4169E1"</span>)) <span class="sc">+</span> <span class="co"># blue for library</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># add labels for axes and title plot</span></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Study Location"</span>,</span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Tasks Completed"</span>) <span class="sc">+</span>  </span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>  <span class="co"># edit theme, and add grid lines</span></span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>, <span class="co"># remove legend</span></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.line.x =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"black"</span>),</span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.line.y =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"black"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -655,7 +654,7 @@ delta estimate: -0.08 (negligible)
 </section>
 <section id="f.-write-about-your-results" class="level2">
 <h2 class="anchored" data-anchor-id="f.-write-about-your-results">f.&nbsp;Write about your results</h2>
-<p>I did not find a significant difference in median tasks completed between café (n = 16, median = 3) and library (n = 15, median = 5) study sessions (Wilcoxon rank-sum test: W = 103.5, p = 0.72, α = 0.05), with a negligible effect size (Cliff’s δ = -0.08). Although the library median was larger by 2 tasks, the large p-value and negligible effect size suggest this difference is not meaningful and could be due to random chance. Study location does not appear to have a significant influence on my productivity as measured by tasks completed per session.</p>
+<p>I did not find a significant difference in median tasks completed between café (n = 15, median = 3) and library (n = 15, median = 5) study sessions (Wilcoxon rank-sum test: W = 103.5, p = 0.72, α = 0.05), with a negligible effect size (Cliff’s δ = -0.08). Although the library median was larger by 2 tasks, the large p-value and negligible effect size suggest this difference is not meaningful and could be due to random chance. Study location does not appear to have a significant influence on my productivity as measured by tasks completed per session.</p>
 </section>
 <section id="g.-sharing-your-affective-visualization" class="level2">
 <h2 class="anchored" data-anchor-id="g.-sharing-your-affective-visualization">g. Sharing your affective visualization</h2>

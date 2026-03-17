@@ -161,8 +161,9 @@ The response variable, nest site use vs non-use is a binary variable. 1 indicate
 |--------------|--------------------|--------------------------------|-----------------------------|
 | 0            | X                  | X                              | No predictors (null model)  |
 | 1            | ✔                  | ✔                              | All predictors (full model) |
-| 2            | X.                 | ✔                              | Visual obstruction only     |
-| 3            | ✔                  | X                              | Distance to colony edge only|
+| 2            | X                  | ✔                              | Distance to colony edge only|
+| 3            | ✔                  | X                              | Visual obstruction only     |
+
 
 ## d. Run the models
 
@@ -251,11 +252,13 @@ ggplot(mopl_clean,
        y = "Probability of nest site occupancy (1 = Yes, 0 = No)") +
   # change to light theme, change custom font 
   theme_light(base_family = "eb_garamond") +
-  theme(panel.grid = element_blank()) # remove gridlines
+  theme(panel.grid = element_blank(), # remove gridlines
+        panel.background = element_blank())
+
 ```
 
 ## h. Write a caption for your figure.
-**Figure 1. Mountain Plovers show higher probability of nest site occupancy at lower levels of visual obstruction.** The x-axis represents visual obstruction at the nest site in cm, and the y-axis represents the predicted probability of nest site occupancy (0 = unused, 1 = used). Each point represents an individual nest site observation. The black/dark purple line represents the model-predicted probability of nest site occupancy across the range of visual obstruction values. The green ribbon represents the 95% confidence interval around the model predictions. Data citation: Duchardt, Courtney; Beck, Jeffrey; Augustine, David (2020). Data from: Mountain Plover habitat selection and nest survival in relation to weather variability and spatial attributes of Black-tailed Prairie Dog disturbance [Dataset]. Dryad. https://doi.org/10.5061/dryad.ttdz08kt7.
+**Figure 1. Mountain Plovers show higher probability of nest site occupancy at lower levels of visual obstruction.** The x-axis represents visual obstruction at the nest site in cm, and the y-axis represents the predicted probability of nest site occupancy (0 = unused, 1 = used). Each point represents an individual nest site observation. The dark purple line represents the model-predicted probability of nest site occupancy across the range of visual obstruction values. The green ribbon represents the 95% confidence interval around the model predictions. Data citation: Duchardt, Courtney; Beck, Jeffrey; Augustine, David (2020). Data from: Mountain Plover habitat selection and nest survival in relation to weather variability and spatial attributes of Black-tailed Prairie Dog disturbance [Dataset]. Dryad. https://doi.org/10.5061/dryad.ttdz08kt7.
 
 ## i. Calculate model predictions
 ```{r}
@@ -269,7 +272,7 @@ ggpredict(mopl_model3, # use best model 3
 
 ```
 ## j. Interpret your results
-The predicted probability of Mountain Plover nest site occupancy at 0 on the index of visual obstruction is 73% (95% CI: 0.65, 0.80). Overall, the selected model shows a negative relationship between visual obstruction and probability of occupancy. As figure 1 shows, as visual obstruction increases, there is also a lower probability of plover nest sites being used with a sharp decrease around 5 cm and higher of obstruction. Biologically, reduced vegetation height and increased exposure of bare ground enhances the Mountain Plover habitat quality. Additionally, sparse vegetation in the range of 3–5 cm also creates ideal plover habitat because the layer of vegetation conceals their body while still allowing them to scan for and detect approaching predators, (Discussion, paragraph 4). 
+The predicted probability of Mountain Plover nest site occupancy at 0 cm visual obstruction is 73% (95% CI: 0.65, 0.80). Overall, the selected model shows a negative relationship between visual obstruction and probability of occupancy. As Figure 1 shows, as visual obstruction increases, there is a lower probability of plover nest sites being used with a sharp decrease around 5 cm and higher of obstruction. Biologically, reduced vegetation height and increased exposure of bare ground enhances the Mountain Plover habitat quality. Additionally, sparse vegetation in the range of 3–5 cm also creates ideal plover habitat because the layer of vegetation conceals their body while still allowing them to scan for and detect approaching predators (Discussion, paragraph 4). 
 
 # Problem 4. Affective and exploratory visualizations
 
@@ -335,7 +338,7 @@ ggplot(data = my_clean_data,
         axis.line.x = element_line(color = "black"))
 ```
 
-Both the café and library distributions are unimodal and right-skewed, indicating similar distributional shape, so all assumptions are met."
+Both the café and library distributions are unimodal and right-skewed, indicating similar distributional shape, so all assumptions are met.
 
 ### Wilcoxon rank sum exact test
 
@@ -374,7 +377,7 @@ cliff.delta(tasks_completed ~ study_location,
             data = my_clean_data)
 ```
 
-I found a small (Cliff’s δ = -0.08) difference in median task completed between cafés (n = 5) and the library(n = 15). (Wilcoxon rank-sum test, W = 103.5, p = 0.72, ⍺ = 0.05). Tasks completed tended to be smaller in cafés (median = 3) than in the library(median = 5).
+I found a small (Cliff’s δ = -0.08) difference in median task completed between cafés (n = 15) and the library(n = 15). (Wilcoxon rank-sum test, W = 103.5, p = 0.72, ⍺ = 0.05). Tasks completed tended to be smaller in cafés (median = 3) than in the library(median = 5).
 
 ## d. Create a visualization
 
@@ -418,7 +421,7 @@ ggplot(data = my_clean_data,
 
 ## f. Write about your results
 
-I did not find a significant difference in median tasks completed between café (n = 16, median = 3) and library (n = 15, median = 5) study sessions (Wilcoxon rank-sum test: W = 103.5, p = 0.72, α = 0.05), with a negligible effect size (Cliff's δ = -0.08). Although the library median was larger by 2 tasks, the large p-value and negligible effect size suggest this difference is not meaningful and could be due to random chance. Study location does not appear to have a significant influence on my productivity as measured by tasks completed per session.
+I did not find a significant difference in median tasks completed between café (n = 15, median = 3) and library (n = 15, median = 5) study sessions (Wilcoxon rank-sum test: W = 103.5, p = 0.72, α = 0.05), with a negligible effect size (Cliff's δ = -0.08). Although the library median was larger by 2 tasks, the large p-value and negligible effect size suggest this difference is not meaningful and could be due to random chance. Study location does not appear to have a significant influence on my productivity as measured by tasks completed per session.
 
 ## g. Sharing your affective visualization
 
